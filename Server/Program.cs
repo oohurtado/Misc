@@ -32,3 +32,10 @@ namespace Server
         }
     }
 }
+
+
+/*
+https://localhost:7243/openapi/v1.json
+https://localhost:7243/WeatherForecast/v1
+https://localhost:7243/WeatherForecast/v2
+*/
