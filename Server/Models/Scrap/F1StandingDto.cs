@@ -1,0 +1,22 @@
+﻿namespace Server.Models.Scrap
+{
+    public class F1StandingDto
+    {
+        public List<string> RaceTacks { get; set; } = [];
+        public List<F1Standing_ColumnLabel>? ColumnLabels { get; set; }
+        public List<F1Standing_RowLabel>? RowLabels { get; set; }
+    }
+
+    public class F1Standing_ColumnLabel
+    {
+        public string Position { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
+        public string Abbreviation { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class F1Standing_RowLabel
+    {
+        public List<string> Points { get; set; } = [];
+    }
+}

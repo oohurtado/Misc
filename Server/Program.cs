@@ -1,4 +1,6 @@
 
+using Server.Services.Scrap;
+
 namespace Server
 {
     public class Program
@@ -7,7 +9,14 @@ namespace Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            #region dev
             // Add services to the container.
+            builder.Services.AddScoped<IScrapService, ScrapService>();
+
+            // Habilita logging a consola
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole(); 
+            #endregion
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
