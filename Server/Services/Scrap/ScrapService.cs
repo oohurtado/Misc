@@ -165,7 +165,7 @@ namespace Server.Services.Scrap
 
                 foreach (var tr in trs)
                 {
-                    await Task.Delay(100 * 1);
+                    await Task.Delay(10 * 1);
 
                     var tds = await tr.QuerySelectorAllAsync("td");
                     var spans = await tds[0].QuerySelectorAllAsync("span");
@@ -228,12 +228,12 @@ namespace Server.Services.Scrap
                     });
 
                     var tds = await tr.QuerySelectorAllAsync("td");
-                    await Task.Delay(100);
+                    await Task.Delay(10);
 
                     j = 0;
                     foreach (var td in tds)
                     {
-                        await Task.Delay(100);
+                        await Task.Delay(10);
                         _logger.LogInformation($"Row {i} - {j}");
 
                         var span = await td.QuerySelectorAsync("span");
