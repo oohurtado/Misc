@@ -144,7 +144,8 @@ namespace Server.Services.Scrap
             #region step 2 - scrap data
             _logger.LogInformation($"Scrap - wait for main");
             await Page.GoToAsync(url);
-            await Page.WaitForSelectorAsync(".standings__table");            
+            await Page.WaitForSelectorAsync(".standings__table");
+            await Page.WaitForSelectorAsync(".tbl-feed-header-text");
             await Task.Delay(1000 * 3);
 
             _logger.LogInformation($"Scrap - getting div");
