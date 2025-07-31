@@ -23,7 +23,7 @@ namespace Server.Services.Scrap
         #region init browser
         private async Task InitializeAsync()
         {
-            var pageBrowser = await GetPageAsync(devtools: false, headless: false);
+            var pageBrowser = await GetPageAsync(devtools: true, headless: true);
             Page = pageBrowser.Item1;
             Browser = pageBrowser.Item2;
         }
@@ -38,8 +38,17 @@ namespace Server.Services.Scrap
                 {
                     "--disable-web-security",
                     "--disable-features=IsolateOrigins,site-per-process",
-                    "--no-sandbox,--disable-setuid-sandbox"
+                    "--no-sandbox,--disable-setuid-sandbox",
+                    
+                    "--disable-dev-shm-usage",                     
+                    "--disable-gpu",
+
+                    "--disable-notifications",
+                    "--disable-sync",
+                    "--disable-background-networking"
                 },
+                
+                DumpIO = true, // Sends the browser logs to the console
             };
 
             var broserFetcer = new BrowserFetcher();
@@ -55,8 +64,7 @@ namespace Server.Services.Scrap
         #region f1 standings
         public async Task<F1StandingDto> F1StandingsAsync(string type, string year)
         {
-            _logger.LogInformation($"Scrap starts");
-
+            //_logger.LogInformation($"Scrap starts");
             F1StandingsValidation(type, year);
             await InitializeAsync();
 
@@ -116,7 +124,7 @@ namespace Server.Services.Scrap
             */
             #endregion
 
-            #region step 1 - fix urls
+            #region fix urls
             if (year == DateTime.Now.Year.ToString())
             {
                 if (type == "drivers")
@@ -139,24 +147,41 @@ namespace Server.Services.Scrap
                     url = $"https://www.espn.com/f1/standings/_/season/{year}/group/constructors";
                 }
             }
+            #endregion            
+
+            #region some events
+            await Page.SetRequestInterceptionAsync(true);
+
+            Page.Request += async (sender, e) =>
+            {
+                var url = e.Request.Url.ToLower();                
+
+                if (!url.Contains("espn"))
+                {
+                    await e.Request.AbortAsync();
+                }
+                else
+                {
+                    //_logger.LogInformation($"Scrap - intercepts request {url}");
+                    await e.Request.ContinueAsync();
+                }
+            };
+            //Page.Close += (_, _) => _logger.LogInformation($"Scrap - page closed");
+            //Browser.Disconnected += (_, _) => _logger.LogInformation($"Scrap - browser disconnected");
             #endregion
 
-            #region step 2 - scrap data
-            _logger.LogInformation($"Scrap - wait for main");
+            #region scrap data
+            //_logger.LogInformation($"Scrap - wait for main");
             await Page.GoToAsync(url);
-            await Page.WaitForSelectorAsync(".standings__table");
-            await Page.WaitForSelectorAsync(".tbl-feed-header-text");
-            await Task.Delay(1000 * 3);
+            //await Page.EvaluateExpressionAsync("setInterval(() => console.log('keep alive'), 10000)");                  
 
-            _logger.LogInformation($"Scrap - getting div");
+            //_logger.LogInformation($"Scrap - getting div");
             var div = await Page.QuerySelectorAsync("div[class*='standings__table'] > div[class*='ResponsiveTable']");
-            await Task.Delay(1000 * 1);
 
             // driver/constructor
             {
-                _logger.LogInformation($"Scrap - getting divers/constructors");
+                //_logger.LogInformation($"Scrap - getting divers/constructors");
                 var trs = await div.QuerySelectorAllAsync("div[class*='flex'] > table > tbody > tr");
-                await Task.Delay(1000 * 3);
 
                 if (trs == null)
                 {
@@ -165,8 +190,6 @@ namespace Server.Services.Scrap
 
                 foreach (var tr in trs)
                 {
-                    await Task.Delay(10 * 1);
-
                     var tds = await tr.QuerySelectorAllAsync("td");
                     var spans = await tds[0].QuerySelectorAllAsync("span");
 
@@ -197,18 +220,14 @@ namespace Server.Services.Scrap
             
             // race track
             {
-                _logger.LogInformation($"Scrap - getting race traks");
+                //_logger.LogInformation($"Scrap - getting race traks");
                 var table = await div.QuerySelectorAsync("div[class*='flex'] > div[class*='Table__ScrollerWrapper'] > div[class*='Table__Scroller'] > table");
-                await Task.Delay(1000 * 3);
-
                 if (table == null)
                 {
                     throw new Exception("Some weird error");
                 }
 
                 var thead_a = await table.QuerySelectorAllAsync("thead > tr > th > span > a");
-                await Task.Delay(1000 * 3);
-
                 foreach (var a in thead_a)
                 {
                     var name = await a.EvaluateFunctionAsync<string>("el => el.textContent.trim()");
@@ -218,8 +237,6 @@ namespace Server.Services.Scrap
                 int i = 0, j = 0;
 
                 var tbody_trs = await table.QuerySelectorAllAsync("tbody > tr");
-                await Task.Delay(100);
-
                 foreach (var tr in tbody_trs)
                 {
                     f1StandingDto.RowLabels.Add(new F1Standing_RowLabel
@@ -228,14 +245,11 @@ namespace Server.Services.Scrap
                     });
 
                     var tds = await tr.QuerySelectorAllAsync("td");
-                    await Task.Delay(10);
 
                     j = 0;
                     foreach (var td in tds)
                     {
-                        await Task.Delay(10);
-                        _logger.LogInformation($"Row {i} - {j}");
-
+                        //_logger.LogInformation($"Row {i} - {j}");
                         var span = await td.QuerySelectorAsync("span");
                         var points = await span.EvaluateFunctionAsync<string>("el => el.textContent.trim()");
                         f1StandingDto.RowLabels.Last().Points.Add(points);
