@@ -17,6 +17,9 @@ namespace Server.Controllers
             _scrapLogic = scrapLogic;
         }
 
+        /// <summary>
+        /// Creates or updates Formula 1 standings.
+        /// </summary>
         [HttpPost]
         [Route("formula1/standings")]
         public async Task<IActionResult> UpsertFormula1Standing([FromBody] Formula1StantingRequest request)
@@ -25,6 +28,9 @@ namespace Server.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Get Formula 1 standings for a specific type and year.
+        /// </summary>
         [HttpGet]
         [Route("formula1/standings/{type:required}/{year:required}")]
         public async Task<IActionResult> Formula1StandingsAsync(string type, int year)
@@ -35,6 +41,14 @@ namespace Server.Controllers
                 return NotFound();
             }
             
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("formula1/standings/{sortColumn}/{sortOrder}/{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> Formula1StandingsAsync(string sortColumn, string sortOrder, int pageNumber, int pageSize, string? term = null, string? filters = null)
+        {
+            var result = await _scrapLogic.GetFormula1StandingsAsync(sortColumn, sortOrder, pageNumber, pageSize, term, filters);                       
             return Ok(result);
         }
     }

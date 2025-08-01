@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PuppeteerSharp;
 using Server.Source.Data.Interfaces;
+using Server.Source.Helpers;
+using Server.Source.Models;
 using Server.Source.Models.Entities;
 using Server.Source.Models.Scrap.Formula1;
 using Server.Source.Services.Scrap;
@@ -73,7 +75,7 @@ namespace Server.Source.Logic
             }
         }
 
-        public async Task<Formula1StandingResponse> GetFormula1StandingsAsync(string type, int year)
+        public async Task<ApiResponse<Formula1StandingScrap>> GetFormula1StandingsAsync(string type, int year)
         {
             var data = await _scrapDataRepository
                 .GetFormula1Standings(type, year)
@@ -85,10 +87,29 @@ namespace Server.Source.Logic
                 return null!;
             }
 
-            return new Formula1StandingResponse()
+            return new ApiResponse<Formula1StandingScrap>()
+            {        
+                TimestampAt = data.EventAt,
+                Data = JsonSerializer.Deserialize<Formula1StandingScrap>(data.DataJson)!                
+            };
+        }
+
+        public async Task<ApiResponse<List<Formula1StandingDto>>> GetFormula1StandingsAsync(string sortColumn, string sortOrder, int pageNumber, int pageSize, string? term, string? filters)
+        {
+            var data = await _scrapDataRepository
+                .GetFormula1StandingsByPage(sortColumn, sortOrder, pageNumber, pageSize, term: term ?? string.Empty, filters: filters ?? string.Empty, out int grandTotal)
+                .Select(p => new Formula1StandingDto()
+                {
+                    Id = p.Id,
+                    Type = p.Type,
+                    Year = p.Year
+                })
+                .ToListAsync();
+
+            return new ApiResponse<List<Formula1StandingDto>>()
             {
-                EventAt = data.EventAt,
-                Data = JsonSerializer.Deserialize<Formula1StandingScrap>(data.DataJson)
+                Data = data,
+                GrandTotal = grandTotal,
             };
         }
 
@@ -109,7 +130,7 @@ namespace Server.Source.Logic
             {
                 throw new ArgumentException("Type must be either 'drivers' or 'constructors'.");
             }
-        } 
+        }
         #endregion
     }
 }
