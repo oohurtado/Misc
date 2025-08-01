@@ -32,6 +32,7 @@ namespace Server.Source.Data
                 e.Property(p => p.Type).IsRequired(required: true).HasMaxLength(50);
                 e.Property(p => p.Year).IsRequired(required: true);
                 e.Property(p => p.DataJson).IsRequired(required: true);
+                e.Property(p => p.EventAt).IsRequired(required: true);                
 
                 e.HasIndex(p => new { p.Type, p.Year }).IsUnique();
             });

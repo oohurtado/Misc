@@ -75,18 +75,21 @@ namespace Server.Source.Logic
 
         public async Task<Formula1StandingResponse> GetFormula1StandingsAsync(string type, int year)
         {
-            var dataJson = await _scrapDataRepository
+            var data = await _scrapDataRepository
                 .GetFormula1Standings(type, year)
-                .Select(p => p.DataJson)
+                .Select(p => new { p.EventAt, p.DataJson })
                 .FirstOrDefaultAsync();
 
-            if (string.IsNullOrEmpty(dataJson))
+            if (data == null)
             {
                 return null!;
             }
 
-            var result = JsonSerializer.Deserialize<Formula1StandingResponse>(dataJson);
-            return result!;
+            return new Formula1StandingResponse()
+            {
+                EventAt = data.EventAt,
+                Data = JsonSerializer.Deserialize<Formula1StandingScrap>(data.DataJson)
+            };
         }
 
         #region helper methods

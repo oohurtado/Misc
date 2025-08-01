@@ -64,7 +64,7 @@ namespace Server.Source.Services.Scrap
         #endregion
 
         #region formula1 standings
-        public async Task<Formula1StandingResponse> Formula1StandingsAsync(string type, int year)
+        public async Task<Formula1StandingScrap> Formula1StandingsAsync(string type, int year)
         {
             await InitializeAsync();
 
@@ -89,10 +89,10 @@ namespace Server.Source.Services.Scrap
             }
         }
 
-        private async Task<Formula1StandingResponse> Formula1StandingsScrapAsync(string type, int year)
+        private async Task<Formula1StandingScrap> Formula1StandingsScrapAsync(string type, int year)
         {
             var url = string.Empty;
-            var f1StandingDto = new Formula1StandingResponse()
+            var f1StandingDto = new Formula1StandingScrap()
             {
                 ColumnLabels = new List<Formula1Standing_ColumnLabel>(),
                 RaceTacks = new List<string>(),

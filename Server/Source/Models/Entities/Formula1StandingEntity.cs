@@ -6,5 +6,6 @@
         public string Type { get; set; } = null!;
         public int Year { get; set; }
         public string DataJson { get; set; } = null!;
+        public DateTime EventAt { get; set; }
     }
 }

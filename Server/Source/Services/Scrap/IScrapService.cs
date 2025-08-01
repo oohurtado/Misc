@@ -6,6 +6,6 @@ namespace Server.Source.Services.Scrap
 {
     public interface IScrapService
     {
-        Task<Formula1StandingResponse> Formula1StandingsAsync(string type, int year);
+        Task<Formula1StandingScrap> Formula1StandingsAsync(string type, int year);
     }
 }
