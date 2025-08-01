@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using PuppeteerSharp;
-using Server.Models.Scrap;
+using Server.Source.Models.Scrap;
 using System;
 using System.Diagnostics;
 
-namespace Server.Services.Scrap
+namespace Server.Source.Services.Scrap
 {
     public class ScrapService : IScrapService
     {
@@ -61,16 +61,14 @@ namespace Server.Services.Scrap
         }
         #endregion
 
-        #region f1 standings
-        public async Task<F1StandingDto> F1StandingsAsync(string type, string year)
+        #region formula1 standings
+        public async Task<Formula1StandingDto> Formula1StandingsAsync(string type, int year)
         {
-            //_logger.LogInformation($"Scrap starts");
-            F1StandingsValidation(type, year);
             await InitializeAsync();
 
             try
             {
-                var result = await F1StandingsScrapAsync(type, year);
+                var result = await Formula1StandingsScrapAsync(type, year);
                 return result;
             }
             catch (Exception)
@@ -87,28 +85,10 @@ namespace Server.Services.Scrap
             }
         }
 
-        private void F1StandingsValidation(string type, string year)
-        {
-            if (string.IsNullOrWhiteSpace(type) || string.IsNullOrWhiteSpace(year))
-            {
-                throw new ArgumentException("Type and year are required.");
-            }
-
-            if (type != "drivers" && type != "constructors")
-            {
-                throw new ArgumentException("Type must be either 'drivers' or 'constructors'.");
-            }
-
-            if (!int.TryParse(year, out int parsedYear) || parsedYear < 2001)
-            {
-                throw new ArgumentException("Year must be a valid integer greater than or equal to 2001.");
-            }
-        }
-
-        private async Task<F1StandingDto> F1StandingsScrapAsync(string type, string year)
+        private async Task<Formula1StandingDto> Formula1StandingsScrapAsync(string type, int year)
         {
             var url = string.Empty;
-            var f1StandingDto = new F1StandingDto()
+            var f1StandingDto = new Formula1StandingDto()
             {
                 ColumnLabels = new List<F1Standing_ColumnLabel>(),
                 RaceTacks = new List<string>(),
@@ -125,7 +105,7 @@ namespace Server.Services.Scrap
             #endregion
 
             #region fix urls
-            if (year == DateTime.Now.Year.ToString())
+            if (year == DateTime.Now.Year)
             {
                 if (type == "drivers")
                 {

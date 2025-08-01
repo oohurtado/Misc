@@ -1,6 +1,6 @@
-﻿namespace Server.Models.Scrap
+﻿namespace Server.Source.Models.Scrap
 {
-    public class F1StandingDto
+    public class Formula1StandingDto
     {
         public List<string> RaceTacks { get; set; } = [];
         public List<F1Standing_ColumnLabel>? ColumnLabels { get; set; }

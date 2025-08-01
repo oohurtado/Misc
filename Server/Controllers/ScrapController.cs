@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Server.Services.Scrap;
+using Server.Source.Logic;
+using Server.Source.Services.Scrap;
 
 namespace Server.Controllers
 {
@@ -8,11 +9,11 @@ namespace Server.Controllers
     [ApiController]
     public class ScrapController : ControllerBase
     {
-        private readonly IScrapService _scrapService;
+        private readonly ScrapLogic _scrapLogic;
 
-        public ScrapController(IScrapService scrapService)
+        public ScrapController(ScrapLogic scrapLogic)
         {
-            _scrapService = scrapService;
+            _scrapLogic = scrapLogic;
         }
 
         /// <summary>
@@ -22,10 +23,10 @@ namespace Server.Controllers
         /// <param name="year">2001..</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("f1-standings/{type:required}/{year:required}")]
-        public async Task<IActionResult> F1StandingsAsync(string type, string year)
+        [Route("formula1/standings/{type:required}/{year:required}")]
+        public async Task<IActionResult> Formula1StandingsAsync(string type, int year)
         {
-            var result = await _scrapService.F1StandingsAsync(type, year);
+            var result = await _scrapLogic.Formula1StandingsAsync(type, year);
             return Ok(result);
         }
     }
