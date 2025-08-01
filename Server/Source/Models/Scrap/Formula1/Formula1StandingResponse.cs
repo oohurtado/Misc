@@ -1,13 +1,13 @@
-﻿namespace Server.Source.Models.Scrap
+﻿namespace Server.Source.Models.Scrap.Formula1
 {
-    public class Formula1StandingDto
+    public class Formula1StandingResponse
     {
         public List<string> RaceTacks { get; set; } = [];
-        public List<F1Standing_ColumnLabel>? ColumnLabels { get; set; }
-        public List<F1Standing_RowLabel>? RowLabels { get; set; }
+        public List<Formula1Standing_ColumnLabel>? ColumnLabels { get; set; }
+        public List<Formula1Standing_RowLabel>? RowLabels { get; set; }
     }
 
-    public class F1Standing_ColumnLabel
+    public class Formula1Standing_ColumnLabel
     {
         public string Position { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
@@ -15,7 +15,7 @@
         public string Name { get; set; } = string.Empty;
     }
 
-    public class F1Standing_RowLabel
+    public class Formula1Standing_RowLabel
     {
         public List<string> Points { get; set; } = [];
     }

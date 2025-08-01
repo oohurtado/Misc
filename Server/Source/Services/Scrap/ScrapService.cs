@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using PuppeteerSharp;
-using Server.Source.Models.Scrap;
+using Server.Source.Models.Scrap.Formula1;
 using System;
 using System.Diagnostics;
 
@@ -23,6 +24,7 @@ namespace Server.Source.Services.Scrap
         #region init browser
         private async Task InitializeAsync()
         {
+            _logger.LogInformation("Initializing Puppeteer browser...");
             var pageBrowser = await GetPageAsync(devtools: true, headless: true);
             Page = pageBrowser.Item1;
             Browser = pageBrowser.Item2;
@@ -62,7 +64,7 @@ namespace Server.Source.Services.Scrap
         #endregion
 
         #region formula1 standings
-        public async Task<Formula1StandingDto> Formula1StandingsAsync(string type, int year)
+        public async Task<Formula1StandingResponse> Formula1StandingsAsync(string type, int year)
         {
             await InitializeAsync();
 
@@ -73,10 +75,12 @@ namespace Server.Source.Services.Scrap
             }
             catch (Exception)
             {
+                _logger.LogError("An error occurred while scraping Formula 1 standings.");
                 throw;
             }
             finally
             {
+                _logger.LogInformation("Closing Puppeteer browser...");
                 if (Page != null)
                 {
                     await Page.CloseAsync();
@@ -85,14 +89,14 @@ namespace Server.Source.Services.Scrap
             }
         }
 
-        private async Task<Formula1StandingDto> Formula1StandingsScrapAsync(string type, int year)
+        private async Task<Formula1StandingResponse> Formula1StandingsScrapAsync(string type, int year)
         {
             var url = string.Empty;
-            var f1StandingDto = new Formula1StandingDto()
+            var f1StandingDto = new Formula1StandingResponse()
             {
-                ColumnLabels = new List<F1Standing_ColumnLabel>(),
+                ColumnLabels = new List<Formula1Standing_ColumnLabel>(),
                 RaceTacks = new List<string>(),
-                RowLabels = new List<F1Standing_RowLabel>(),
+                RowLabels = new List<Formula1Standing_RowLabel>(),
             };            
 
             #region example url
@@ -105,6 +109,7 @@ namespace Server.Source.Services.Scrap
             #endregion
 
             #region fix urls
+            _logger.LogInformation($"Scrap - getting url for {type} in {year}");
             if (year == DateTime.Now.Year)
             {
                 if (type == "drivers")
@@ -129,7 +134,7 @@ namespace Server.Source.Services.Scrap
             }
             #endregion            
 
-            #region some events
+            #region some events            
             await Page.SetRequestInterceptionAsync(true);
 
             Page.Request += async (sender, e) =>
@@ -151,16 +156,16 @@ namespace Server.Source.Services.Scrap
             #endregion
 
             #region scrap data
-            //_logger.LogInformation($"Scrap - wait for main");
+            _logger.LogInformation($"Scrap - go to page");
             await Page.GoToAsync(url);
             //await Page.EvaluateExpressionAsync("setInterval(() => console.log('keep alive'), 10000)");                  
 
-            //_logger.LogInformation($"Scrap - getting div");
+            _logger.LogInformation($"Scrap - getting main div");
             var div = await Page.QuerySelectorAsync("div[class*='standings__table'] > div[class*='ResponsiveTable']");
 
             // driver/constructor
             {
-                //_logger.LogInformation($"Scrap - getting divers/constructors");
+                _logger.LogInformation($"Scrap - getting divers/constructors");
                 var trs = await div.QuerySelectorAllAsync("div[class*='flex'] > table > tbody > tr");
 
                 if (trs == null)
@@ -188,7 +193,7 @@ namespace Server.Source.Services.Scrap
                     }
                     var name = await spans[3].EvaluateFunctionAsync<string>("el => el.textContent.trim()");
 
-                    f1StandingDto.ColumnLabels.Add(new F1Standing_ColumnLabel
+                    f1StandingDto.ColumnLabels.Add(new Formula1Standing_ColumnLabel
                     {
                         Position = position,
                         Image = imgName,
@@ -200,7 +205,7 @@ namespace Server.Source.Services.Scrap
             
             // race track
             {
-                //_logger.LogInformation($"Scrap - getting race traks");
+                _logger.LogInformation($"Scrap - getting race traks");
                 var table = await div.QuerySelectorAsync("div[class*='flex'] > div[class*='Table__ScrollerWrapper'] > div[class*='Table__Scroller'] > table");
                 if (table == null)
                 {
@@ -216,10 +221,11 @@ namespace Server.Source.Services.Scrap
 
                 int i = 0, j = 0;
 
+                _logger.LogInformation($"Scrap - getting race traks points");
                 var tbody_trs = await table.QuerySelectorAllAsync("tbody > tr");
                 foreach (var tr in tbody_trs)
                 {
-                    f1StandingDto.RowLabels.Add(new F1Standing_RowLabel
+                    f1StandingDto.RowLabels.Add(new Formula1Standing_RowLabel
                     {
                         Points = new List<string>()
                     });

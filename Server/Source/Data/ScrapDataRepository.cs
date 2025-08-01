@@ -1,4 +1,5 @@
-﻿using Server.Source.Data.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Source.Data.Interfaces;
 using Server.Source.Models.Entities;
 
 namespace Server.Source.Data
@@ -17,10 +18,30 @@ namespace Server.Source.Data
             return _context.Formula1Standings.Where(s => s.Type == type && s.Year == year);
         }
 
-        public async Task SaveFormula1StandingAsync(Formula1StandingEntity entity)
+        public async Task<bool> UpsertFormula1StandingsAsync(string type, int year, string dataJson)
         {
-            _context.Formula1Standings.Add(entity);
-            await _context.SaveChangesAsync();
+            var entity = await _context.Formula1Standings.FirstOrDefaultAsync(s => s.Type == type && s.Year == year);
+            if (entity == null)
+            {
+                entity = new Formula1StandingEntity
+                {
+                    Type = type,
+                    Year = year,
+                    DataJson = dataJson
+                };
+                _context.Formula1Standings.Add(entity);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            else
+            {
+                entity.DataJson = dataJson;
+                _context.Formula1Standings.Update(entity);
+                await _context.SaveChangesAsync();
+
+                return false;
+            }
         }
     }
 }

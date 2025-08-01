@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PuppeteerSharp;
 using Server.Source.Data.Interfaces;
 using Server.Source.Models.Entities;
-using Server.Source.Models.Scrap;
+using Server.Source.Models.Scrap.Formula1;
 using Server.Source.Services.Scrap;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Source.Logic
 {
@@ -11,56 +13,87 @@ namespace Server.Source.Logic
     {
         private readonly IScrapService _scrapService;
         private readonly IScrapDataRepository _scrapDataRepository;
+        private readonly ILogger<ScrapLogic> _logger;
 
         public ScrapLogic(
             IScrapService scrapService,
-            IScrapDataRepository scrapDataRepository
+            IScrapDataRepository scrapDataRepository,
+            ILogger<ScrapLogic> logger
             )
         {
             _scrapService = scrapService;
             _scrapDataRepository = scrapDataRepository;
+            _logger = logger;
         }
 
-        public async Task<Formula1StandingDto> Formula1StandingsAsync(string type, int year)
+        public async Task UpsertFormula1StandingsAsync(Formula1StantingRequest request)
         {
-            Formula1StandingsValidation(type, year);
+            Formula1StandingsValidation(request.Type, request.Year);
 
-            // since the current championship is not over, we scrap the data every time user asks for it
-            if (year == DateTime.Now.Year)
+            // current year
+            if (request.Year == DateTime.Now.Year)
             {
-                var result = await _scrapService.Formula1StandingsAsync(type, year);
-                return result;
+                _logger.LogInformation("Current year standings requested: {Year}", request.Year);
+                var data = await _scrapService.Formula1StandingsAsync(request.Type, request.Year);
+                var entity = new Formula1StandingEntity
+                {
+                    Type = request.Type,
+                    Year = request.Year,
+                    DataJson = JsonSerializer.Serialize(data)
+                };
+
+                var result = await _scrapDataRepository.UpsertFormula1StandingsAsync(request.Type, request.Year, dataJson: JsonSerializer.Serialize(data));
+                _logger.LogInformation($"Upserting data ({(result ? "creating" : "updating" )})");
+                return;
             }
 
-            // if the year is not the current one, we check if the data is already in the database
-            var data = await _scrapDataRepository
+            // previous years
+            {
+                _logger.LogInformation("Getting data");
+                var existsData = await _scrapDataRepository.GetFormula1Standings(request.Type, request.Year).AnyAsync();
+                if (existsData)
+                {
+                    // if data exists, we do nothing
+                    _logger.LogInformation("Data for {Type} in {Year} already exists, no need to scrap again.", request.Type, request.Year);
+                    return;
+                }
+                else
+                {
+                    var data = await _scrapService.Formula1StandingsAsync(request.Type, request.Year);
+                    var entity = new Formula1StandingEntity
+                    {
+                        Type = request.Type,
+                        Year = request.Year,
+                        DataJson = JsonSerializer.Serialize(data)
+                    };
+                    await _scrapDataRepository.UpsertFormula1StandingsAsync(request.Type, request.Year, dataJson: JsonSerializer.Serialize(data));
+                    _logger.LogInformation("Data for {Type} in {Year} does not exist, scrapping and saving.", request.Type, request.Year);
+                    return;
+                }
+            }
+        }
+
+        public async Task<Formula1StandingResponse> GetFormula1StandingsAsync(string type, int year)
+        {
+            var dataJson = await _scrapDataRepository
                 .GetFormula1Standings(type, year)
                 .Select(p => p.DataJson)
                 .FirstOrDefaultAsync();
 
-            // if the data is found, we deserialize it and return the model
-            if (!string.IsNullOrEmpty(data))
+            if (string.IsNullOrEmpty(dataJson))
             {
-                var model = JsonSerializer.Deserialize<Formula1StandingDto>(data);
-                return model!;
+                return null!;
             }
-            // if the data is not found, we scrap it and save it to the database
-            else
-            {
-                var result = await _scrapService.Formula1StandingsAsync(type, year);
-                var entity = new Formula1StandingEntity
-                {
-                    Type = type,
-                    Year = year,
-                    DataJson = JsonSerializer.Serialize(result)
-                };
-                await _scrapDataRepository.SaveFormula1StandingAsync(entity);
-                return result;
-            }     
+
+            var result = JsonSerializer.Deserialize<Formula1StandingResponse>(dataJson);
+            return result!;
         }
 
+        #region helper methods
         private void Formula1StandingsValidation(string type, int year)
         {
+            _logger.LogInformation("Validating Formula 1 standings request: Type={Type}, Year={Year}", type, year);
+
             if (year > DateTime.Now.Year)
             {
                 throw new ArgumentException("Year cannot be in the future.");
@@ -73,6 +106,7 @@ namespace Server.Source.Logic
             {
                 throw new ArgumentException("Type must be either 'drivers' or 'constructors'.");
             }
-        }
+        } 
+        #endregion
     }
 }
