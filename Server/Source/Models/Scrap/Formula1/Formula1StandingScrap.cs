@@ -2,7 +2,7 @@
 {
      public class Formula1StandingScrap
     {        
-        public List<string> RaceTacks { get; set; } = [];
+        public List<string> RaceTracks { get; set; } = [];
         public List<Formula1Standing_ColumnLabel>? ColumnLabels { get; set; }
         public List<Formula1Standing_RowLabel>? RowLabels { get; set; }
     }

@@ -95,7 +95,7 @@ namespace Server.Source.Services.Scrap
             var f1StandingDto = new Formula1StandingScrap()
             {
                 ColumnLabels = new List<Formula1Standing_ColumnLabel>(),
-                RaceTacks = new List<string>(),
+                RaceTracks = new List<string>(),
                 RowLabels = new List<Formula1Standing_RowLabel>(),
             };            
 
@@ -216,7 +216,7 @@ namespace Server.Source.Services.Scrap
                 foreach (var a in thead_a)
                 {
                     var name = await a.EvaluateFunctionAsync<string>("el => el.textContent.trim()");
-                    f1StandingDto.RaceTacks.Add(name);
+                    f1StandingDto.RaceTracks.Add(name);
                 }
 
                 int i = 0, j = 0;
