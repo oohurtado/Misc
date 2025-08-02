@@ -18,7 +18,18 @@ namespace Server
         }
 
         private static void ConfigureServices(WebApplicationBuilder builder)
-        {              
+        {
+            #region cors
+            builder.Services.AddCors(o => o.AddPolicy(name: "OriginAngular", policy =>
+            {
+                policy
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            }));
+            #endregion
+
             #region data base
             builder.Services
                 .AddIdentity<UserEntity, IdentityRole>(p =>
@@ -71,6 +82,10 @@ namespace Server
         private static void ConfigureApp(WebApplicationBuilder builder)
         {
             var app = builder.Build();
+
+            #region cors
+            app.UseCors("OriginAngular"); 
+            #endregion
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
