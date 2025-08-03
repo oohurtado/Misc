@@ -6,11 +6,12 @@ import { HomeComponent } from './components/section/home/home.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent},
-    {
-        path: 'sections/formula1-standings', component: Formula1StandingsComponent, children: [
-            { path: '', redirectTo: 'list', pathMatch: 'full' },
-            { path: 'list', component: Formula1StandingsListComponent },
-        ]
-    },
+    { path: 'sections/f1-standings', component: Formula1StandingsComponent},
+    // {
+    //     path: 'sections/formula1-standings', component: Formula1StandingsComponent, children: [
+    //         { path: '', redirectTo: 'list', pathMatch: 'full' },
+    //         { path: 'list', component: Formula1StandingsListComponent },
+    //     ]
+    // },
     { path: '**', pathMatch: 'full', redirectTo: 'home' }
 ];
