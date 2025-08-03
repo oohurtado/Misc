@@ -44,6 +44,9 @@ namespace Server.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get Formula 1 standings with pagination and sorting.
+        /// </summary>
         [HttpGet]
         [Route("formula1/standings/{sortColumn}/{sortOrder}/{pageNumber}/{pageSize}")]
         public async Task<IActionResult> Formula1StandingsAsync(string sortColumn, string sortOrder, int pageNumber, int pageSize, string? term = null, string? filters = null)

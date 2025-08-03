@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Formula1StandingsListComponent } from "./formula1-standings-list/formula1-standings-list.component";
 import { PaginatorComponent } from "../../_shared/paginator/paginator.component";
+import { IPaginatorNavigation } from '../../../source/models/paginator.models';
 
 @Component({
     selector: 'app-formula1-standings',
@@ -12,10 +13,13 @@ import { PaginatorComponent } from "../../_shared/paginator/paginator.component"
 })
 export class Formula1StandingsComponent {
     
-    someNumber: number = 0;
+    // someNumber: number = 0;
 
-    onBasic($event: number) {
-        console.log('Basic event triggered:', $event);
-        this.someNumber = $event;
-    }    
+    // onBasic($event: number) {
+    //     console.log('Basic event triggered:', $event);
+    //     this.someNumber = $event;
+    // }        
+
+    constructor() {   
+    }
 }

@@ -1,25 +1,34 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { IPageNavigationOption, IPaginatorNavigation } from '../../../source/models/paginator.models';
+import { CommonModule, JsonPipe } from '@angular/common';
 
 @Component({
     selector: 'app-paginator',
     standalone: true,
-    imports: [],
+    imports: [JsonPipe, CommonModule],
     templateUrl: './paginator.component.html',
     styleUrl: './paginator.component.css'
 })
 export class PaginatorComponent {
 
-    @Output() evtBasic!: EventEmitter<number>;
-
+    @Input() navigation: IPaginatorNavigation = { options: [] };
+    @Output() evtNavigationCreateClicked: EventEmitter<IPageNavigationOption> = new EventEmitter<IPageNavigationOption>();
+    
     constructor() {
-        this.evtBasic = new EventEmitter<number>();
+    }
+    onNavigationCreateClicked($event: MouseEvent, arg1: IPageNavigationOption) {
+        console.log('onNavigationCreateClicked', $event, arg1);
+        this.evtNavigationCreateClicked.emit(arg1);
     }
 
-    getRandomNumber(): number {
-        return Math.floor(Math.random() * 100);
-    }
 
-    notify() {
-        this.evtBasic.emit(this.getRandomNumber());
-    }
+    
+    // this.evtBasic = new EventEmitter<number>();
+    // @Output() evtBasic!: EventEmitter<number>;
+    // getRandomNumber(): number {
+    //     return Math.floor(Math.random() * 100);
+    // }
+    // notify() {
+    //     this.evtBasic.emit(this.getRandomNumber());
+    // }
 }

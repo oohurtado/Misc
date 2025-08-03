@@ -1,6 +1,42 @@
+<div class="row border border-1">
+    <div class="col-sm-6 border border-1">
+        @if (navigation.options.length == 1)
+        {
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-light border" (click)="onNavigationCreateClicked($event, navigation.options[0]);" [ngClass]="{'disabled': navigation.options[0].disabled}">
+                    {{ navigation.options[0].text }}&nbsp;&nbsp;<span><i class="{{ navigation.icon }}"></i></span>
+                </button>
+            </div>
+        }         
+        
+        @if (navigation.options.length > 1)
+        {
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <div class="btn-group" role="group">
+                    <button id="btn_orderGroup" type="button" class="btn btn-light border dropdown-toggle"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span><i class="{{ navigation.icon }}"></i></span>&nbsp;
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="btn_orderGroup">
+                        @for (item of navigation.options; track item.value) {
+                            <li>
+                                <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onNavigationCreateClicked($event, item)">{{ item.text }}</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }            
+    </div>
+    <div class="col-sm-6 border border-1">right</div>
+</div>
+
+
+<!-- 
 <div class="bolder border-1 rounded p-2 mb-2">
     <button (click)="notify()">Basic</button>
     <p>paginator top</p>
     <ng-content></ng-content>
     <p>paginator bottom</p>
-</div>
+</div> 
+-->
