@@ -12,7 +12,10 @@ import { PaginatorComponent } from "../../_shared/paginator/paginator.component"
 })
 export class Formula1StandingsComponent {
     
+    someNumber: number = 0;
+
     onBasic($event: number) {
         console.log('Basic event triggered:', $event);
+        this.someNumber = $event;
     }    
 }

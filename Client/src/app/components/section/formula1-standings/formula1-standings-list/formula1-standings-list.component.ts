@@ -11,7 +11,7 @@ import { ScrapService } from '../../../../services/scrap.service';
 })
 export class Formula1StandingsListComponent implements OnInit {
     
-    @Input() data!: string;
+    @Input() data!: number;
     
     constructor(private scrapService: ScrapService) {
         // Initialization logic can go here if needed
