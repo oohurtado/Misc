@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
-import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected } from '../../../../source/models/paginator.models';
+import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected, IPageFilter } from '../../../../source/models/paginator.models';
 import { Formula1StandingsListComponent } from '../formula1-standings-list/formula1-standings-list.component';
+import { LocalStorageService } from '../../../../services/common/local-storage.service';
 
 @Component({
 	selector: 'app-formula1-standings-base',
@@ -11,11 +12,14 @@ import { Formula1StandingsListComponent } from '../formula1-standings-list/formu
 	styleUrl: './formula1-standings-base.component.css'
 })
 export class Formula1StandingsBaseComponent {
-	
+
 	navigation!: IPageNavigation;
 	order!: IPageOrder;
+	filterSection: string = 'formula1-standings';
+	// filters!: IPageFilter[];
+	// filtersAsString!: string;
 
-	constructor() {
+	constructor(private localStorageService: LocalStorageService) {
 		this.initialNavigation();
 	}
 
@@ -34,21 +38,26 @@ export class Formula1StandingsBaseComponent {
 				],
 			startPosition: 0,
 			isAscending: true
-		};
+		};	
 	}
 
 	onNavigationClicked($event: IPageNavigationOption) {
 		console.log('Navigation option clicked:', $event);
 	}
 
-	onSyncClicked($event: void) {
-		console.log('Sync button clicked', $event);
+	onSyncClicked() {
+		console.log('Sync button clicked');
 	}
 
 	onSortClicked($event: Event) {
 		console.log('Sort button clicked', $event);		
 	}
+
 	onOrderOptionClicked($event: IPageOrderSelected) {
 		console.log('Order option clicked:', $event);
 	}
+
+	onFilterAppliedClicked() {
+		console.log('Filter applied clicked');		
+	}	
 }

@@ -30,6 +30,17 @@
     </div>    
     <div class="col-sm-6 text-end">
 
+        @if(filterData.length > 0)
+        {
+            <button type="button" class="btn btn-light border" (click)="onFilterClicked()" >
+                <span><i class="fa-solid fa-sliders"></i></span>&nbsp;
+            </button>
+
+            <div class="btn-group" role="group">
+                <div class="ms-1"></div>
+            </div>
+        }
+
         @if(orderData != null && orderData.options != null && orderData.options.length > 0) {
             <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                 <div class="btn-group" role="group">
@@ -64,13 +75,87 @@
         </div>
 
     </div>
+
     <div class="col-12 mt-2 mb-2 border border-1">
         <ng-content></ng-content>
     </div>
+
     <div class="col-12 text-end">
         paginacion
     </div>
 </div>
+
+<div class="offcanvas offcanvas-end data-bs-scroll" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop"
+    aria-labelledby="staticBackdropLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="staticBackdropLabel">Filtros</h5>
+        <button type="button" #closeFilterModal class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" (click)="onFilterCloseClicked($event)"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="text-start">
+            @for (filter of filterData; track filter.section) {
+                <h6>{{ filter.section }}</h6>
+                <ng-container *ngFor="let ex of filter.extra">
+                    <span class="border" [ngClass]="{ 'filter-opt-checked': ex.param3, 'filter-opt-not-checked': !ex.param3}" (click)="onFilterElementClicked($event, filter.section, ex)">
+                        {{ ex.param2 }}
+                        <span *ngIf="ex.param3"><i class="fa-solid fa-check"></i></span>
+                        <span *ngIf="!ex.param3"><i class="fa-solid fa-xmark"></i></span>
+                    </span>&nbsp;
+                </ng-container>                
+            }          
+        </div>        
+        <div>
+            <hr>
+        </div>
+        <div class="text-end mt-2">
+            <button type="button" class="btn btn-secondary me-1" (click)="onFilterCloseClicked($event)">Cerrar</button>
+            <button type="button" class="btn btn-primary ms-1" (click)="onFilterOkClicked($event)">Aplicar</button>
+        </div>
+    </div>
+</div>
+
+<button #openFilterModal class="btn btn-primary collapse" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+    Toggle static offcanvas
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br><br><br><br><br>
+<pre>{{ filterData | json }}</pre>
 
 <!-- 
 <div class="bolder border-1 rounded p-2 mb-2">
