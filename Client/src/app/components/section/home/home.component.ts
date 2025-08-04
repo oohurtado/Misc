@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { SectionsComponent } from "../../_shared/sections/sections.component";
 import { SystemService } from '../../../services/common/system.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-home',
     standalone: true,
-    imports: [SectionsComponent],
+    imports: [RouterModule],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })

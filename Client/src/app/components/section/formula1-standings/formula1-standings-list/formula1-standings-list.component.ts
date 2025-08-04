@@ -1,30 +1,61 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ScrapService } from '../../../../services/scrap.service';
+import { IPageReady } from '../../../../source/models/paginator.models';
+import { LocalStorageService } from '../../../../services/common/local-storage.service';
+import { Scr_Formula1StandingResponse } from '../../../../source/models/scrap/formula1-standing.response';
+import { ApiResponse } from '../../../../source/models/api.response';
+import { DatePipe, JsonPipe } from '@angular/common';
 // import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
 
 @Component({
-  selector: 'app-formula1-standings-list',
-  standalone: true,
-//   imports: [PaginatorComponent],
-  templateUrl: './formula1-standings-list.component.html',
-  styleUrl: './formula1-standings-list.component.css'
+    selector: 'app-formula1-standings-list',
+    standalone: true,
+    imports: [JsonPipe, DatePipe],
+    templateUrl: './formula1-standings-list.component.html',
+    styleUrl: './formula1-standings-list.component.css'
 })
-export class Formula1StandingsListComponent implements OnInit {
-    
-    @Input() data!: number;
-    
-    constructor(private scrapService: ScrapService) {
+export class Formula1StandingsListComponent implements OnInit, OnChanges {
+
+    @Input() pageReady!: IPageReady;
+    @Input() filterSection!: string;
+    response!: ApiResponse<Scr_Formula1StandingResponse[]>;
+    isProcessing: boolean;
+
+    constructor(
+      private scrapService: ScrapService,
+      private localStorageService: LocalStorageService
+    ) {
         // Initialization logic can go here if needed
+        this.isProcessing = false;
     }
 
     async ngOnInit() {
-        // await this.scrapService
-        //     .getFormula1StandingsAsync("drivers", 2025)
-        //     .then((data) => {
-        //         console.log(data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching Formula 1 standings:', error)
-        //     });
+    }
+
+    async ngOnChanges(changes: SimpleChanges) {
+        const prev = changes['pageReady'].previousValue;
+        const curr = changes['pageReady'].currentValue;
+
+      if (prev !== curr) {
+        this.pageReady = Object.assign(<IPageReady>{}, curr);
+        this.isProcessing = true;
+        await this.onScrapDataAsync();
+        this.isProcessing = false;
+      }
+    }
+
+    async onScrapDataAsync() {     
+        let term = '';
+        let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.filterSection));        
+
+        await this.scrapService
+            .getFormula1StandingsByPageAsync(this.pageReady.orderSelected.value, this.pageReady.orderSelected.isAscending ? 'asc' : 'desc', 1, 10, term, filter)
+            .then(response => {
+                this.response = Object.assign(new ApiResponse<Scr_Formula1StandingResponse[]>(), response);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                // Handle the error here
+            });
     }
 }

@@ -16,9 +16,7 @@ export class Formula1StandingsBaseComponent {
 	navigation!: IPageNavigation;
 	order!: IPageOrder;
 	filterSection: string = 'formula1-standings';
-
-	// filters!: IPageFilter[];
-	// filtersAsString!: string;
+	pageReadyData!: IPageReady;
 
 	constructor(private localStorageService: LocalStorageService) {
 		this.initialNavigation();
@@ -43,10 +41,9 @@ export class Formula1StandingsBaseComponent {
 	}
 
 	onNavigationClicked($event: IPageNavigationOption) {
-		console.log('Navigation option clicked:', $event);
 	}
 
 	onPageReadyClicked($event: IPageReady) {
-		console.log('Page ready:', $event);
+		this.pageReadyData = $event;
 	}	
 }

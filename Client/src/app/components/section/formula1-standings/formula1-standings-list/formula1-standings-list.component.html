@@ -1,16 +1,41 @@
-<!-- <p>formula1-standings-list works!</p>
-<app-paginator [message]="'Formula 1 Standings Pagination'">
-    <p>lol</p>
-</app-paginator> -->
-<!-- <p>some {{ data }}</p>
-<ul>
-    <li>Driver 1</li>
-    <li>Driver 2</li>
-    <li>Driver 3</li>
-</ul> -->
-
-<ul>
-    <li>Driver 1</li>
-    <li>Driver 2</li>
-    <li>Driver 3</li>
-</ul>
+<div class="table-responsive">
+    <table class="table table-bordered mt-2 mb-2">
+        <thead class="table-light">
+            <tr>
+                <th style="white-space:nowrap;" [width]="'1%'"></th>
+                <th style="white-space:nowrap;" [width]="'50%'" scope="col">Type</th>
+                <th style="white-space:nowrap;" [width]="'50%'" scope="col">Year</th>
+                <th style="white-space:nowrap;" [width]="'1%'" scope="col">Event at</th>
+            </tr>
+        </thead>        
+        <tbody>            
+            @if(response != null && !response.success && !isProcessing)
+            {
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <div  class="alert alert-danger mt-4 ml-4 mr-4" role="alert">
+                            {{ response.errorMessage }}
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if(response != null && response.success && !isProcessing && response.data.length == 0)
+            {
+                <tr>
+                    <td colspan="4" class="text-center">
+                        No data to show at this moment
+                    </td>
+                </tr>
+            }
+            @for (item of response.data; track item)
+            {
+                <tr>
+                    <td>[redo]</td>
+                    <td>{{ item.type }}</td>
+                    <td>{{ item.year }}</td>
+                    <td style="white-space:nowrap;">{{ item.eventAt | date:'M/d/yy, h:mm a' }}</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

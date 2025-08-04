@@ -102,7 +102,8 @@ namespace Server.Source.Logic
                 {
                     Id = p.Id,
                     Type = p.Type,
-                    Year = p.Year
+                    Year = p.Year,
+                    EventAt = p.EventAt,
                 })
                 .ToListAsync();
 

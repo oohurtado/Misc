@@ -42,6 +42,8 @@ export class PaginatorComponent implements OnInit {
         };
 
         this.filterData = this.localStorageService.getPageFilter(this.filterSection);
+
+        this.pageReady('init');
     }
 
     pageReady(buttonClicked: string) {
