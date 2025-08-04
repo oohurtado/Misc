@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected, IPageFilter } from '../../../source/models/paginator.models';
+import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected, IPageFilter, IPageReady } from '../../../source/models/paginator.models';
 import { CommonModule, JsonPipe } from '@angular/common';
 import { LocalStorageService } from '../../../services/common/local-storage.service';
 import { Tuple3 } from '../../../source/models/tuple.models';
@@ -13,24 +13,22 @@ import { Tuple3 } from '../../../source/models/tuple.models';
 })
 export class PaginatorComponent implements OnInit {
 
+    // paginator
+    @Output() evtPageReady: EventEmitter<IPageReady> = new EventEmitter<IPageReady>();
+
     // navigation
     @Input() navigationData: IPageNavigation = { options: [] };
     @Output() evtNavigationClicked: EventEmitter<IPageNavigationOption> = new EventEmitter<IPageNavigationOption>();
     navigationSelected: IPageNavigationOption | null = null;   
-
-    // sync
-    @Output() evtSyncClicked: EventEmitter<void> = new EventEmitter<void>();
     
     // order
-    @Input() orderData!: IPageOrder;
-    @Output() evtOrderSelectedClicked: EventEmitter<IPageOrderSelected> = new EventEmitter<IPageOrderSelected>();
+    @Input() orderData!: IPageOrder;    
     currentOrderOption!: string;
     orderSelected!: IPageOrderSelected;
 
     // filter
     @ViewChild('openFilterModal', { static: true }) openModal!: ElementRef;
-    @ViewChild('closeFilterModal', { static: true }) closeModal!: ElementRef;
-    @Output() evtFilterAppliedClicked: EventEmitter<void> = new EventEmitter<void>();    
+    @ViewChild('closeFilterModal', { static: true }) closeModal!: ElementRef;     
     @Input() filterSection!: string;    
     filterData: IPageFilter[] = [];         
 
@@ -45,27 +43,34 @@ export class PaginatorComponent implements OnInit {
 
         this.filterData = this.localStorageService.getPageFilter(this.filterSection);
     }
-    
+
+    pageReady(buttonClicked: string) {
+        this.evtPageReady.emit({
+            orderSelected: this.orderSelected,
+            buttonClicked: buttonClicked
+        });
+    }
+
     onNavigationClicked($event: MouseEvent, option: IPageNavigationOption) {
         this.navigationSelected = option;        
         this.evtNavigationClicked.emit(this.navigationSelected);
     }
 
     onSyncClicked($event: MouseEvent) {
-        this.evtSyncClicked.emit();
+        this.pageReady('sync');
     }
 
     onOrderOptionClicked(event: Event, index: number) {
         this.orderSelected.value = this.orderData.options[index].value;
         this.currentOrderOption = this.orderSelected.value;
-        this.evtOrderSelectedClicked.emit(this.orderSelected);
+        this.pageReady('order-option');
     }
 
     onOrderSortClicked(event: Event) {
         let button = event.target as HTMLButtonElement;
         button.blur();
         this.orderSelected.isAscending = !this.orderSelected.isAscending;
-        this.evtOrderSelectedClicked.emit(this.orderSelected);
+        this.pageReady('order-sort');
     }
 
     isOrderOptionSelectedClicked(data: string): boolean {
@@ -89,7 +94,7 @@ export class PaginatorComponent implements OnInit {
     
     onFilterOkClicked($event: MouseEvent) {        
         this.localStorageService.setPageFilter(this.filterSection, this.filterData);
-        this.evtFilterAppliedClicked.emit();
+        this.pageReady('filter-ok');
         this.closeModal.nativeElement.click();
     }
 

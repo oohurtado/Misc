@@ -1,14 +1,3 @@
-<app-paginator     
-    [navigationData]="navigation" 
-    (evtNavigationClicked)="onNavigationClicked($event)" 
-    (evtSyncClicked)="onSyncClicked()"
-    
-    [orderData]="order"
-    (evtOrderSelectedClicked)="onOrderOptionClicked($event)"
-    (evtSortClicked)="onSortClicked($event)"
-
-    [filterSection]="filterSection"    
-    (evtFilterAppliedClicked)="onFilterAppliedClicked()"
-    >
+<app-paginator [navigationData]="navigation" [orderData]="order" [filterSection]="filterSection" (evtNavigationClicked)="onNavigationClicked($event)" (evtPageReady)="onPageReadyClicked($event)">
     <app-formula1-standings-list></app-formula1-standings-list>
 </app-paginator>

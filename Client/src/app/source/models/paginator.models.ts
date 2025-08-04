@@ -1,5 +1,11 @@
 import { Tuple3 } from "./tuple.models";
 
+/* page ready */
+export interface IPageReady {
+    orderSelected: IPageOrderSelected;
+    buttonClicked?: string;
+}
+
 /* navigation models */
 export interface IPageNavigation {
     options: IPageNavigationOption[];
