@@ -14,10 +14,10 @@ export class Formula1StandingsBaseComponent {
 	navigation!: IPaginatorNavigation;
 
 	constructor() {
-		this.withDisabledInitialNavigation();
+		this.initialNavigation();
 	}
 
-	withDisabledInitialNavigation(){
+	initialNavigation(){
 		this.navigation = {
 			options: [
 				{ text: 'Scrap data', value: "scrap-data", disabled: false },
@@ -29,5 +29,9 @@ export class Formula1StandingsBaseComponent {
 
 	onNavigationCreateClicked($event: IPageNavigationOption) {
 		console.log('Navigation option clicked:', $event);
+	}
+
+	onSyncClicked($event: void) {
+		console.log('Sync button clicked');
 	}
 }

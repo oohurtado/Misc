@@ -1,9 +1,9 @@
-<div class="row border border-1">
-    <div class="col-sm-6 border border-1">
+<div class="row">
+    <div class="col-sm-6">
         @if (navigation.options.length == 1)
         {
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-light border" (click)="onNavigationCreateClicked($event, navigation.options[0]);" [ngClass]="{'disabled': navigation.options[0].disabled}">
+                <button type="button" class="btn btn-light border" (click)="onNavigationClicked($event, navigation.options[0]);" [ngClass]="{'disabled': navigation.options[0].disabled}">
                     {{ navigation.options[0].text }}&nbsp;&nbsp;<span><i class="{{ navigation.icon }}"></i></span>
                 </button>
             </div>
@@ -20,7 +20,7 @@
                     <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="btn_orderGroup">
                         @for (item of navigation.options; track item.value) {
                             <li>
-                                <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onNavigationCreateClicked($event, item)">{{ item.text }}</a>
+                                <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onNavigationClicked($event, item)">{{ item.text }}</a>
                             </li>
                         }
                     </ul>
@@ -28,7 +28,14 @@
             </div>
         }            
     </div>
-    <div class="col-sm-6 border border-1">right</div>
+    <div class="col-sm-6 text-end">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-light border" (click)="onSyncClicked($event);">
+                <span><i class="fa-solid fa-rotate"></i></span>
+            </button>
+        </div>
+
+    </div>
 </div>
 
 
