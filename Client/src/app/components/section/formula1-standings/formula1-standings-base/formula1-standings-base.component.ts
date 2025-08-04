@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
-import { IPageNavigationOption, IPaginatorNavigation } from '../../../../source/models/paginator.models';
+import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected } from '../../../../source/models/paginator.models';
 
 @Component({
 	selector: 'app-formula1-standings-base',
@@ -11,7 +11,8 @@ import { IPageNavigationOption, IPaginatorNavigation } from '../../../../source/
 })
 export class Formula1StandingsBaseComponent {
 	
-	navigation!: IPaginatorNavigation;
+	navigation!: IPageNavigation;
+	order!: IPageOrder;
 
 	constructor() {
 		this.initialNavigation();
@@ -25,13 +26,28 @@ export class Formula1StandingsBaseComponent {
 			],
 			icon: 'fa-solid fa-user-ninja'
 		};
+		this.order = {
+			options: [
+				{ text: 'Type', value: 'type', disabled: false },
+				{ text: 'Year', value: 'year', disabled: false },
+				],
+			startPosition: 0,
+			isAscending: true
+		};
 	}
 
-	onNavigationCreateClicked($event: IPageNavigationOption) {
+	onNavigationClicked($event: IPageNavigationOption) {
 		console.log('Navigation option clicked:', $event);
 	}
 
 	onSyncClicked($event: void) {
-		console.log('Sync button clicked');
+		console.log('Sync button clicked', $event);
+	}
+
+	onSortClicked($event: Event) {
+		console.log('Sort button clicked', $event);		
+	}
+	onOrderOptionClicked($event: IPageOrderSelected) {
+		console.log('Order option clicked:', $event);
 	}
 }

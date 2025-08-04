@@ -1,2 +1,10 @@
-<app-paginator [navigation]="navigation" (evtNavigationCreateClicked)="onNavigationCreateClicked($event)" (evtSyncClicked)="onSyncClicked($event)">
+<app-paginator     
+    [navigationData]="navigation" 
+    (evtNavigationClicked)="onNavigationClicked($event)" 
+    (evtSyncClicked)="onSyncClicked($event)"
+    
+    [orderData]="order"
+    (evtOrderSelected)="onOrderOptionClicked($event)"
+    (evtSortClicked)="onSortClicked($event)"
+    >
 </app-paginator>

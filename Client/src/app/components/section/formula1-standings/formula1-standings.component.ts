@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Formula1StandingsListComponent } from "./formula1-standings-list/formula1-standings-list.component";
 import { PaginatorComponent } from "../../_shared/paginator/paginator.component";
-import { IPaginatorNavigation } from '../../../source/models/paginator.models';
+import { IPageNavigation } from '../../../source/models/paginator.models';
 
 @Component({
     selector: 'app-formula1-standings',

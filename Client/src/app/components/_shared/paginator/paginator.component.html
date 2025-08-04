@@ -1,24 +1,24 @@
 <div class="row">
     <div class="col-sm-6">
-        @if (navigation.options.length == 1)
+        @if (navigationData.options.length == 1)
         {
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-light border" (click)="onNavigationClicked($event, navigation.options[0]);" [ngClass]="{'disabled': navigation.options[0].disabled}">
-                    {{ navigation.options[0].text }}&nbsp;&nbsp;<span><i class="{{ navigation.icon }}"></i></span>
+                <button type="button" class="btn btn-light border" (click)="onNavigationClicked($event, navigationData.options[0]);" [ngClass]="{'disabled': navigationData.options[0].disabled}">
+                    {{ navigationData.options[0].text }}&nbsp;&nbsp;<span><i class="{{ navigationData.icon }}"></i></span>
                 </button>
             </div>
         }         
         
-        @if (navigation.options.length > 1)
+        @if (navigationData.options.length > 1)
         {
             <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                 <div class="btn-group" role="group">
                     <button id="btn_orderGroup" type="button" class="btn btn-light border dropdown-toggle"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <span><i class="{{ navigation.icon }}"></i></span>&nbsp;
+                        <span><i class="{{ navigationData.icon }}"></i></span>&nbsp;
                     </button>
                     <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="btn_orderGroup">
-                        @for (item of navigation.options; track item.value) {
+                        @for (item of navigationData.options; track item.value) {
                             <li>
                                 <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onNavigationClicked($event, item)">{{ item.text }}</a>
                             </li>
@@ -29,6 +29,30 @@
         }            
     </div>
     <div class="col-sm-6 text-end">
+
+        @if(orderData != null && orderData.options != null && orderData.options.length > 0) {
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <div class="btn-group" role="group">
+                    <button id="btn_orderGroup" type="button" class="btn btn-light border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btn_orderGroup">
+                        <li *ngFor="let item of orderData.options; let i = index;">
+                            <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onOrderOptionClicked($event, i)">{{ item.text }} <span *ngIf="isCurrentOptionSelected(item.value)">&nbsp;&#9679;</span></a>                        
+                        </li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-light border" (click)="onSortClicked($event);">
+                    <span *ngIf="this.orderSelected.isAscending"><i class="fa-solid fa-arrow-down-short-wide"></i></span>
+                    <span *ngIf="!this.orderSelected.isAscending"><i class="fa-solid fa-arrow-down-wide-short"></i></span>
+                </button>            
+            </div>  
+
+            <div class="btn-group" role="group">
+                <div class="ms-1"></div>
+            </div>
+        }
+
+
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-light border" (click)="onSyncClicked($event);">
                 <span><i class="fa-solid fa-rotate"></i></span>
@@ -37,7 +61,6 @@
 
     </div>
 </div>
-
 
 <!-- 
 <div class="bolder border-1 rounded p-2 mb-2">
