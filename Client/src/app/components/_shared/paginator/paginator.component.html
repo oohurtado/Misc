@@ -27,7 +27,7 @@
                 </div>
             </div>
         }            
-    </div>
+    </div>    
     <div class="col-sm-6 text-end">
 
         @if(orderData != null && orderData.options != null && orderData.options.length > 0) {
@@ -36,12 +36,16 @@
                     <button id="btn_orderGroup" type="button" class="btn btn-light border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="btn_orderGroup">
-                        <li *ngFor="let item of orderData.options; let i = index;">
-                            <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onOrderOptionClicked($event, i)">{{ item.text }} <span *ngIf="isCurrentOptionSelected(item.value)">&nbsp;&#9679;</span></a>                        
-                        </li>
+                        @for (item of orderData.options; track item.value; let i = $index) {
+                            <li>
+                                <a class="dropdown-item cursor-pointer" [ngClass]="{'disabled': item.disabled}" (click)="onOrderOptionClicked($event, i)">{{ item.text }} 
+                                    <span *ngIf="isOrderOptionSelectedClicked(item.value)">&nbsp;&#9679;</span>
+                                </a>
+                            </li>
+                        }                       
                     </ul>
                 </div>
-                <button type="button" class="btn btn-light border" (click)="onSortClicked($event);">
+                <button type="button" class="btn btn-light border" (click)="onOrderSortClicked($event);">
                     <span *ngIf="this.orderSelected.isAscending"><i class="fa-solid fa-arrow-down-short-wide"></i></span>
                     <span *ngIf="!this.orderSelected.isAscending"><i class="fa-solid fa-arrow-down-wide-short"></i></span>
                 </button>            
@@ -59,6 +63,12 @@
             </button>
         </div>
 
+    </div>
+    <div class="col-12 mt-2 mb-2 border border-1">
+        <ng-content></ng-content>
+    </div>
+    <div class="col-12 text-end">
+        paginacion
     </div>
 </div>
 

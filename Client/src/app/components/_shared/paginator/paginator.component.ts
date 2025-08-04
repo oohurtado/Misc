@@ -50,14 +50,14 @@ export class PaginatorComponent implements OnInit {
         this.evtOrderSelected.emit(this.orderSelected);
     }
 
-    onSortClicked(event: Event) {
+    onOrderSortClicked(event: Event) {
         let button = event.target as HTMLButtonElement;
         button.blur();
         this.orderSelected.isAscending = !this.orderSelected.isAscending;
         this.evtOrderSelected.emit(this.orderSelected);
     }
 
-    isCurrentOptionSelected(data: string): boolean {
+    isOrderOptionSelectedClicked(data: string): boolean {
         return data === this.orderSelected.value;
     }
 

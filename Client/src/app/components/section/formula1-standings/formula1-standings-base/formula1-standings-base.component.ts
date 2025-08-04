@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
 import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected } from '../../../../source/models/paginator.models';
+import { Formula1StandingsListComponent } from '../formula1-standings-list/formula1-standings-list.component';
 
 @Component({
 	selector: 'app-formula1-standings-base',
 	standalone: true,
-	imports: [PaginatorComponent],
+	imports: [PaginatorComponent, Formula1StandingsListComponent],
 	templateUrl: './formula1-standings-base.component.html',
 	styleUrl: './formula1-standings-base.component.css'
 })
