@@ -81,7 +81,39 @@
     </div>
 
     <div class="col-12 text-end">
-        paginacion
+        @if(pagerVisible)
+        {
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <button [disabled]="pagerIsFirstDisabled" type="button" class="btn btn-light border" (click)="onPagerOptionClicked('first')">
+                    <span><i class="fa-solid fa-backward-step"></i></span>
+                </button>    
+                <button [disabled]="pagerIsPreviousDisabled" type="button" class="btn btn-light border" (click)="onPagerOptionClicked('previous')">
+                    <span><i class="fa-solid fa-caret-left"></i></span>
+                </button>
+                <button [disabled]="pagerIsNextDisabled" type="button" class="btn btn-light border" (click)="onPagerOptionClicked('next')">
+                    <span><i class="fa-solid fa-caret-right"></i></span>
+                </button>
+                <button [disabled]="pagerIsLastDisabled" type="button" class="btn btn-light border" (click)="onPagerOptionClicked('last')">
+                    <span><i class="fa-solid fa-forward-step"></i></span>
+                </button>
+                &nbsp;
+                <div class="dropdown">
+                    <button class="btn btn-light border dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ pagerSize }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item cursor-pointer" (click)="onPagerSizeClicked($event, 10)">10</a></li>
+                        <li><a class="dropdown-item cursor-pointer" (click)="onPagerSizeClicked($event, 25)">25</a></li>
+                        <li><a class="dropdown-item cursor-pointer" (click)="onPagerSizeClicked($event, 50)">50</a></li>
+                        <li><a class="dropdown-item cursor-pointer" (click)="onPagerSizeClicked($event, 100)">100</a></li>
+                    </ul>
+                </div>
+                &nbsp;
+                <div class="ms-2 m-auto">
+                    {{ pagerFrom }} - {{ pagerTo }} de {{ pagerDataInfo.param2 }} 
+                </div>        
+            </div>              
+        }
     </div>
 </div>
 

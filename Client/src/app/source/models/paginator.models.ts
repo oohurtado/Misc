@@ -41,3 +41,10 @@ export interface IPageFilter {
     section: string;    
     extra: Tuple3<string, string, boolean>[]; // param1 = val, param2 = text, param3 = checked
 }
+
+/* pager */
+// export interface IPageSelected {
+//     from: number;
+//     to: number;
+//     total: number;
+// }

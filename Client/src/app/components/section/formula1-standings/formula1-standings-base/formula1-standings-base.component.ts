@@ -3,6 +3,7 @@ import { PaginatorComponent } from "../../../_shared/paginator/paginator.compone
 import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected, IPageFilter, IPageReady } from '../../../../source/models/paginator.models';
 import { Formula1StandingsListComponent } from '../formula1-standings-list/formula1-standings-list.component';
 import { LocalStorageService } from '../../../../services/common/local-storage.service';
+import { Tuple2 } from '../../../../source/models/tuple.models';
 
 @Component({
 	selector: 'app-formula1-standings-base',
@@ -17,6 +18,7 @@ export class Formula1StandingsBaseComponent {
 	order!: IPageOrder;
 	filterSection: string = 'formula1-standings';
 	pageReadyData!: IPageReady;
+	pagerDataInfo!: Tuple2<number, number>;
 
 	constructor(private localStorageService: LocalStorageService) {
 		this.initialNavigation();
@@ -46,4 +48,8 @@ export class Formula1StandingsBaseComponent {
 	onPageReadyClicked($event: IPageReady) {
 		this.pageReadyData = $event;
 	}	
+
+	onDataInfoChanged($event: Tuple2<number, number>) {
+		this.pagerDataInfo = $event;
+	}
 }

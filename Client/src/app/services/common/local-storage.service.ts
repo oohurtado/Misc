@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IPageFilter } from '../../source/models/paginator.models';
 import { EnumFormula1StandingType } from '../../source/models/enums/formula1-standing-types.enum';
 import { Tuple3 } from '../../source/models/tuple.models';
+import { general } from '../../source/general';
 
 @Injectable({
     providedIn: 'root'
@@ -38,6 +39,24 @@ export class LocalStorageService {
     clean() {
 		localStorage.clear();
 	}
+
+	///////////
+	/* pages */
+	///////////
+
+	getPageSize() : number {
+        let pageSize = localStorage.getItem(general.LS_PAGE_SIZE);
+        if (pageSize === null || pageSize === '') {
+            localStorage.setItem(general.LS_PAGE_SIZE, '10');
+        }
+
+		pageSize = localStorage.getItem(general.LS_PAGE_SIZE);
+		return Number(pageSize);
+    }
+
+	setPageSize(pageSize: number) {
+        localStorage.setItem(general.LS_PAGE_SIZE, pageSize.toString());
+    }	
 
 	/////////////////
 	/* page filter */
