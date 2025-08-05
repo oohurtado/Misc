@@ -25,8 +25,8 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
     @Output() evtDataInfoChanged: EventEmitter<Tuple2<number, number>> = new EventEmitter<Tuple2<number, number>>();
 
     constructor(
-      private scrapService: ScrapService,
-      private localStorageService: LocalStorageService
+        private scrapService: ScrapService,
+        private localStorageService: LocalStorageService
     ) {
         // Initialization logic can go here if needed
         this.isProcessing = false;
@@ -39,25 +39,25 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
         const prev = changes['pageReady'].previousValue;
         const curr = changes['pageReady'].currentValue;
 
-      if (prev !== curr) {
-        this.pageReady = Object.assign(<IPageReady>{}, curr);                
-        await this.onScrapDataAsync();        
-      }
+        if (prev !== curr) {
+            this.pageReady = Object.assign(<IPageReady>{}, curr);
+            await this.onScrapDataAsync();
+        }
     }
 
-    async onScrapDataAsync() {     
+    async onScrapDataAsync() {
         let term = '';
-        let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.section));        
-        
-        this.isProcessing = true;        
+        let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.section));
+
+        this.isProcessing = true;
         await this.scrapService
             .getFormula1StandingsByPageAsync(this.pageReady.orderSelected.value, this.pageReady.orderSelected.isAscending ? 'asc' : 'desc', this.pageReady.pageNumber, this.pageReady.pageSize, term, filter)
             .then(response => {
-                this.response = Object.assign(new ApiResponse<Scr_Formula1StandingResponse[]>(), response);                
+                this.response = Object.assign(new ApiResponse<Scr_Formula1StandingResponse[]>(), response);
                 this.evtDataInfoChanged.emit(new Tuple2<number, number>(this.response.data.length, this.response.grandTotal));
             })
             .catch(error => {
-                console.error('Error fetching data:', error);                
+                console.error('Error fetching data:', error);
                 // Handle the error here
             });
         this.isProcessing = false;

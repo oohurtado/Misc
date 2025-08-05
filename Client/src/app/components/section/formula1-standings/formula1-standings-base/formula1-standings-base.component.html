@@ -1,3 +1,11 @@
-<app-paginator [section]="section" (evtNavigationClicked)="onNavigationClicked($event)" (evtPageReady)="onPageReadyClicked($event)" [pagerDataInfo]="pagerDataInfo">
-    <app-formula1-standings-list [pageReady]="pageReadyData" [section]="section" (evtDataInfoChanged)="onDataInfoChanged($event)"></app-formula1-standings-list>
+<app-paginator 
+    [section]="section" 
+    (evtNavigationClicked)="onNavigationClicked($event)" 
+    (evtPageReady)="pageReady = $event" 
+    [pagerDataInfo]="pagerDataInfo">
+    <app-formula1-standings-list 
+        [pageReady]="pageReady" 
+        [section]="section" 
+        (evtDataInfoChanged)="onDataInfoChanged($event)">
+    </app-formula1-standings-list>
 </app-paginator>

@@ -8,7 +8,7 @@ import { PaginatorFactory } from '../../../source/factories/paginator-factory';
 @Component({
     selector: 'app-paginator',
     standalone: true,
-    imports: [JsonPipe, CommonModule],
+    imports: [CommonModule],
     templateUrl: './paginator.component.html',
     styleUrl: './paginator.component.css'
 })
