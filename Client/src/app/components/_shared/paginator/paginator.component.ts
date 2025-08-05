@@ -55,7 +55,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
         };
 
         this.filterData = this.localStorageService.getPageFilter(this.filterSection);
-        this.pageReady('init');
+        this.pageReady('init', true);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -77,7 +77,11 @@ export class PaginatorComponent implements OnInit, OnChanges {
         this.pagerIsLastDisabled = this.pagerIsNextDisabled = this.pagerTo == this.pagerDataInfo.param2;
     }
 
-    pageReady(buttonClicked: string) {
+    pageReady(buttonClicked: string, setPageNumberToOne: boolean) {
+        if (setPageNumberToOne) {
+            this.pagerNumber = 1;
+        }
+
         this.evtPageReady.emit({
             orderSelected: this.orderSelected,            
             buttonClicked: buttonClicked,
@@ -92,20 +96,20 @@ export class PaginatorComponent implements OnInit, OnChanges {
     }
 
     onSyncClicked($event: MouseEvent) {
-        this.pageReady('sync');
+        this.pageReady('sync', true);
     }
 
     onOrderOptionClicked(event: Event, index: number) {
         this.orderSelected.value = this.orderData.options[index].value;
         this.currentOrderOption = this.orderSelected.value;
-        this.pageReady('order-option');
+        this.pageReady('order-option', true);
     }
 
     onOrderSortClicked(event: Event) {
         let button = event.target as HTMLButtonElement;
         button.blur();
         this.orderSelected.isAscending = !this.orderSelected.isAscending;
-        this.pageReady('order-sort');
+        this.pageReady('order-sort', true);
     }
 
     isOrderOptionSelectedClicked(data: string): boolean {
@@ -129,7 +133,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
     
     onFilterOkClicked($event: MouseEvent) {        
         this.localStorageService.setPageFilter(this.filterSection, this.filterData);
-        this.pageReady('filter-ok');
+        this.pageReady('filter-ok', true);
         this.closeModal.nativeElement.click();
     }
 
@@ -155,14 +159,12 @@ export class PaginatorComponent implements OnInit, OnChanges {
                 break;
         }
 
-        this.pageReady('pager-option');
+        this.pageReady('pager-option', false);
     }
 
-    onPagerSizeClicked($event: MouseEvent, option: number) {
-        this.pagerNumber = 1;
+    onPagerSizeClicked($event: MouseEvent, option: number) {        
         this.pagerSize = option;        
         this.localStorageService.setPageSize(this.pagerSize);
-
-        this.pageReady('pager-size');
+        this.pageReady('pager-size', true);
     }
 }
