@@ -9,7 +9,7 @@
             </tr>
         </thead>        
         <tbody>            
-            @if(response != null && !response.success && !isProcessing)
+            @if(response != null && !response.success)
             {
                 <tr>
                     <td colspan="4" class="text-center">
@@ -19,7 +19,7 @@
                     </td>
                 </tr>
             }
-            @if(response != null && response.success && !isProcessing && response.data.length == 0)
+            @if(response != null && response.success && response.data.length == 0)
             {
                 <tr>
                     <td colspan="4" class="text-center">
@@ -27,7 +27,7 @@
                     </td>
                 </tr>
             }
-            @if(response != null && response.success && !isProcessing && response.data.length > 0)
+            @if(response != null && response.success && response.data.length > 0)
             {
                 @for (item of response.data; track item)
                 {

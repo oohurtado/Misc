@@ -11,7 +11,7 @@ import { Tuple2 } from '../../../../source/models/tuple.models';
 @Component({
     selector: 'app-formula1-standings-list',
     standalone: true,
-    imports: [JsonPipe, DatePipe],
+    imports: [DatePipe],
     templateUrl: './formula1-standings-list.component.html',
     styleUrl: './formula1-standings-list.component.css'
 })
