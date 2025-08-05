@@ -46,7 +46,7 @@ export class Formula1StandingsBaseComponent {
 	}
 
 	onPageReadyClicked($event: IPageReady) {
-		this.pageReadyData = $event;
+		this.pageReadyData = $event;		
 	}	
 
 	onDataInfoChanged($event: Tuple2<number, number>) {

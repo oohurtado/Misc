@@ -3,6 +3,8 @@ import { Tuple3 } from "./tuple.models";
 /* page ready */
 export interface IPageReady {
     orderSelected: IPageOrderSelected;
+    pageNumber: number;
+    pageSize: number;
     buttonClicked?: string;
 }
 

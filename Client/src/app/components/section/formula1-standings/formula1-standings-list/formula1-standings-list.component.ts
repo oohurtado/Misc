@@ -51,7 +51,7 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
         
         this.isProcessing = true;        
         await this.scrapService
-            .getFormula1StandingsByPageAsync(this.pageReady.orderSelected.value, this.pageReady.orderSelected.isAscending ? 'asc' : 'desc', 1, 10, term, filter)
+            .getFormula1StandingsByPageAsync(this.pageReady.orderSelected.value, this.pageReady.orderSelected.isAscending ? 'asc' : 'desc', this.pageReady.pageNumber, this.pageReady.pageSize, term, filter)
             .then(response => {
                 this.response = Object.assign(new ApiResponse<Scr_Formula1StandingResponse[]>(), response);                
                 this.evtDataInfoChanged.emit(new Tuple2<number, number>(this.response.data.length, this.response.grandTotal));

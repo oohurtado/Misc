@@ -33,7 +33,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
     filterData: IPageFilter[] = [];         
 
     // pager    
-    @Input() pagerDataInfo!: Tuple2<number, number>;
+    @Input() pagerDataInfo!: Tuple2<number, number>; // data-size, data-grand-total
     pagerNumber: number = 1;
     pagerSize: number = 0;
     pagerFrom: number = 0;
@@ -62,22 +62,27 @@ export class PaginatorComponent implements OnInit, OnChanges {
         const prev = changes['pagerDataInfo'].previousValue;
         const curr = changes['pagerDataInfo'].currentValue;
 
-      if (prev !== curr) {
+        if (prev !== curr) {
             this.pagerDataInfo = curr;    
-            
-            this.pagerFrom = (this.pagerNumber * this.pagerSize) - this.pagerSize + 1;        
-            this.pagerTo = this.pagerFrom + this.pagerDataInfo.param1 - 1;
-            this.pagerVisible = this.pagerDataInfo.param2 > 0;
+            this.refreshPager();
+        }
+    }
 
-            this.pagerIsFirstDisabled = this.pagerIsPreviousDisabled = this.pagerFrom == 1;         
-            this.pagerIsLastDisabled = this.pagerIsNextDisabled = this.pagerTo == this.pagerDataInfo.param2;
-      }
+    refreshPager() {
+        this.pagerFrom = (this.pagerNumber * this.pagerSize) - this.pagerSize + 1;        
+        this.pagerTo = this.pagerFrom + this.pagerDataInfo.param1 - 1;
+        this.pagerVisible = this.pagerDataInfo.param2 > 0;
+
+        this.pagerIsFirstDisabled = this.pagerIsPreviousDisabled = this.pagerFrom == 1;         
+        this.pagerIsLastDisabled = this.pagerIsNextDisabled = this.pagerTo == this.pagerDataInfo.param2;
     }
 
     pageReady(buttonClicked: string) {
         this.evtPageReady.emit({
             orderSelected: this.orderSelected,            
-            buttonClicked: buttonClicked
+            buttonClicked: buttonClicked,
+            pageNumber: this.pagerNumber,
+            pageSize: this.pagerSize,
         });
     }
 
@@ -129,10 +134,35 @@ export class PaginatorComponent implements OnInit, OnChanges {
     }
 
     onPagerOptionClicked(option: string) {
-        console.log(option);
+        let lastPage = Math.ceil(this.pagerDataInfo.param2 / this.pagerSize);        
+
+        switch (option) {
+            case "first":
+                this.pagerNumber = 1;
+                break;
+            case "previous":
+                if (this.pagerNumber > 1) {
+                    this.pagerNumber--;
+                }
+                break;
+            case "next":
+                if (this.pagerNumber < lastPage) {
+                    this.pagerNumber++;
+                }
+                break;		
+            case "last":
+                this.pagerNumber = lastPage;
+                break;
+        }
+
+        this.pageReady('pager-option');
     }
 
     onPagerSizeClicked($event: MouseEvent, option: number) {
-        console.log(option);
+        this.pagerNumber = 1;
+        this.pagerSize = option;        
+        this.localStorageService.setPageSize(this.pagerSize);
+
+        this.pageReady('pager-size');
     }
 }
