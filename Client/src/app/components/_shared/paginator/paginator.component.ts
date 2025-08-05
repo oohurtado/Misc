@@ -3,6 +3,7 @@ import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected,
 import { CommonModule, JsonPipe } from '@angular/common';
 import { LocalStorageService } from '../../../services/common/local-storage.service';
 import { Tuple2, Tuple3 } from '../../../source/models/tuple.models';
+import { PaginatorFactory } from '../../../source/factories/paginator-factory';
 
 @Component({
     selector: 'app-paginator',
@@ -13,23 +14,24 @@ import { Tuple2, Tuple3 } from '../../../source/models/tuple.models';
 })
 export class PaginatorComponent implements OnInit, OnChanges {
 
+    @Input() section!: string;
+
     // paginator
     @Output() evtPageReady: EventEmitter<IPageReady> = new EventEmitter<IPageReady>();
 
     // navigation
-    @Input() navigationData: IPageNavigation = { options: [] };
+    navigationData: IPageNavigation = { options: [] };
     @Output() evtNavigationClicked: EventEmitter<IPageNavigationOption> = new EventEmitter<IPageNavigationOption>();
     navigationSelected: IPageNavigationOption | null = null;   
     
     // order
-    @Input() orderData!: IPageOrder;    
+    orderData!: IPageOrder;    
     currentOrderOption!: string;
     orderSelected!: IPageOrderSelected;
 
     // filter
     @ViewChild('openFilterModal', { static: true }) openModal!: ElementRef;
-    @ViewChild('closeFilterModal', { static: true }) closeModal!: ElementRef;     
-    @Input() filterSection!: string;    
+    @ViewChild('closeFilterModal', { static: true }) closeModal!: ElementRef;         
     filterData: IPageFilter[] = [];         
 
     // pager    
@@ -49,12 +51,15 @@ export class PaginatorComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
+        this.navigationData = PaginatorFactory.createPageNavigation(this.section);
+        this.orderData = PaginatorFactory.createPageOrder(this.section);
+
         this.orderSelected = {            
             value: this.orderData.options[this.orderData.startPosition].value,
             isAscending: this.orderData.isAscending,
         };
 
-        this.filterData = this.localStorageService.getPageFilter(this.filterSection);
+        this.filterData = this.localStorageService.getPageFilter(this.section);
         this.pageReady('init', true);
     }
 
@@ -121,7 +126,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
     }
 
     onFilterCloseClicked($event: MouseEvent) {
-        this.filterData = this.localStorageService.getPageFilter(this.filterSection);        
+        this.filterData = this.localStorageService.getPageFilter(this.section);        
         this.closeModal.nativeElement.click();            
     }
 
@@ -132,7 +137,7 @@ export class PaginatorComponent implements OnInit, OnChanges {
     }
     
     onFilterOkClicked($event: MouseEvent) {        
-        this.localStorageService.setPageFilter(this.filterSection, this.filterData);
+        this.localStorageService.setPageFilter(this.section, this.filterData);
         this.pageReady('filter-ok', true);
         this.closeModal.nativeElement.click();
     }

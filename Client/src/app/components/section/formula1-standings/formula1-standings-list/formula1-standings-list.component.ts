@@ -18,7 +18,7 @@ import { Tuple2 } from '../../../../source/models/tuple.models';
 export class Formula1StandingsListComponent implements OnInit, OnChanges {
 
     @Input() pageReady!: IPageReady;
-    @Input() filterSection!: string;
+    @Input() section!: string;
     response!: ApiResponse<Scr_Formula1StandingResponse[]>;
     isProcessing: boolean;
 
@@ -47,7 +47,7 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
 
     async onScrapDataAsync() {     
         let term = '';
-        let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.filterSection));        
+        let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.section));        
         
         this.isProcessing = true;        
         await this.scrapService
