@@ -1,0 +1,12 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        @for (item of data; track item) {
+            @if(item.param1 === '') {
+                <li class="breadcrumb-item active" aria-current="page">{{ item.param2 }}</li>
+            } @else {
+                <li class="breadcrumb-item"><a class="cursor-pointer" (click)="onClicked(item)">{{ item.param2 }}</a></li>
+            }
+        }
+    </ol>
+</nav>
+<hr>

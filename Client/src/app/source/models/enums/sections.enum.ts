@@ -1,3 +1,5 @@
 export enum EnumSections {
-    Formula1Standings = "formula1-standings",    
+    Home = "Home",
+    Formula1StandingsList = "formula1-standings",
+    Formula1StandingsEditor = "formula1-standings-editor",
 }

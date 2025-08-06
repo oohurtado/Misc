@@ -3,7 +3,7 @@ import { IPageNavigationOption, IPageNavigation, IPageOrder, IPageOrderSelected,
 import { CommonModule, JsonPipe } from '@angular/common';
 import { LocalStorageService } from '../../../services/common/local-storage.service';
 import { Tuple2, Tuple3 } from '../../../source/models/tuple.models';
-import { PaginatorFactory } from '../../../source/factories/paginator-factory';
+import { PaginatorFactory } from '../../../source/factories/paginator.factory';
 
 @Component({
     selector: 'app-paginator',

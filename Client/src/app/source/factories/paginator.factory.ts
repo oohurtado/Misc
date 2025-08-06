@@ -3,7 +3,7 @@ import { IPageNavigation, IPageOrder } from "../models/paginator.models";
 
 export class PaginatorFactory {
     static createPageNavigation(section: string): IPageNavigation {
-        if (section === EnumSections.Formula1Standings) {
+        if (section === EnumSections.Formula1StandingsList) {
             return {
                 options: [
                     { text: 'Scrap data', value: "scrap-data", disabled: false },
@@ -16,7 +16,7 @@ export class PaginatorFactory {
     }
 
     static createPageOrder(section: string): IPageOrder {
-        if (section === EnumSections.Formula1Standings) {
+        if (section === EnumSections.Formula1StandingsList) {
             return {
                 options: [
                     { text: 'Type', value: 'type', disabled: false },
