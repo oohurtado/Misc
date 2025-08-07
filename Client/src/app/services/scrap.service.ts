@@ -48,6 +48,24 @@ export class ScrapService {
         });
     }
 
+    getFormula1StandingsExists(type: string, year: number) {
+        return this.requestService.get<ApiResponse<Date>>(`/scrap/formula1/standings/${type}/${year}/exists`);
+    }
+
+    getFormula1StandingsExistsAsync(type: string, year: number) : Promise<ApiResponse<Date>> {
+        return new Promise((resolve, reject) => {
+            this.getFormula1StandingsExists(type, year)
+            .subscribe({
+                next: (value) => {
+                    resolve(value);
+                },
+                error: (response) => {
+                    reject(response);
+                }
+            });
+        });
+    }
+
     getFormula1StandingsByPage(sortColumn: string, sortOrder: string, pageNumber: number, pageSize: number, term: string, filters: string) {	
 		return this.requestService.get<ApiResponse<Scr_Formula1StandingResponse[]>>(`/scrap/formula1/standings/${sortColumn}/${sortOrder}/${pageNumber}/${pageSize}?term=${term}&filters=${filters}`);
 	}

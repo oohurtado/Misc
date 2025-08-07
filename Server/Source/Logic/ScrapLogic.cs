@@ -89,8 +89,25 @@ namespace Server.Source.Logic
 
             return new ApiResponse<Formula1StandingScrap>()
             {        
-                TimestampAt = data.EventAt,
                 Data = JsonSerializer.Deserialize<Formula1StandingScrap>(data.DataJson)!                
+            };
+        }
+
+        public async Task<ApiResponse<DateTime>> GetFormula1StandingsExistsAsync(string type, int year)
+        {
+            var data = await _scrapDataRepository
+                .GetFormula1Standings(type, year)
+                .Select(p => new { p.EventAt })
+                .FirstOrDefaultAsync();
+
+            if (data == null)
+            {
+                return null!;
+            }
+
+            return new ApiResponse<DateTime>()
+            {
+                Data = data.EventAt,
             };
         }
 

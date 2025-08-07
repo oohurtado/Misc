@@ -44,6 +44,19 @@ namespace Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("formula1/standings/{type:required}/{year:required}/exists")]
+        public async Task<IActionResult> Formula1StandingsExistsAsync(string type, int year)
+        {
+            var result = await _scrapLogic.GetFormula1StandingsExistsAsync(type, year);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
         /// <summary>
         /// Get Formula 1 standings with pagination and sorting.
         /// </summary>
@@ -54,5 +67,7 @@ namespace Server.Controllers
             var result = await _scrapLogic.GetFormula1StandingsAsync(sortColumn, sortOrder, pageNumber, pageSize, term, filters);                       
             return Ok(result);
         }
+
+
     }
 }

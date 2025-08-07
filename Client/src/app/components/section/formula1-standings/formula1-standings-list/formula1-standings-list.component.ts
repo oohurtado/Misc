@@ -6,12 +6,13 @@ import { Scr_Formula1StandingResponse } from '../../../../source/models/scrap/fo
 import { ApiResponse } from '../../../../source/models/api.response';
 import { DatePipe, JsonPipe } from '@angular/common';
 import { Tuple2 } from '../../../../source/models/tuple.models';
+import { RouterModule } from '@angular/router';
 // import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
 
 @Component({
     selector: 'app-formula1-standings-list',
     standalone: true,
-    imports: [DatePipe],
+    imports: [DatePipe, RouterModule],
     templateUrl: './formula1-standings-list.component.html',
     styleUrl: './formula1-standings-list.component.css'
 })
@@ -22,6 +23,8 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
     response!: ApiResponse<Scr_Formula1StandingResponse[]>;
     isProcessing: boolean;
 
+    currentYear!: number;
+
     @Output() evtDataInfoChanged: EventEmitter<Tuple2<number, number>> = new EventEmitter<Tuple2<number, number>>();
 
     constructor(
@@ -30,6 +33,10 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
     ) {
         // Initialization logic can go here if needed
         this.isProcessing = false;
+        
+        let date = new Date();
+        this.currentYear = date.getFullYear();        
+
     }
 
     async ngOnInit() {

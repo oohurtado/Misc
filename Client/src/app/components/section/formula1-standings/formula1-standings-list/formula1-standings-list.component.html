@@ -2,7 +2,7 @@
     <table class="table table-bordered mt-2 mb-2">
         <thead class="table-light">
             <tr>
-                <th style="white-space:nowrap;" [width]="'1%'"></th>
+                <th style="white-space:nowrap;" [width]="'1%'">Actions</th>
                 <th style="white-space:nowrap;" [width]="'50%'" scope="col">Type</th>
                 <th style="white-space:nowrap;" [width]="'50%'" scope="col">Year</th>
                 <th style="white-space:nowrap;" [width]="'1%'" scope="col">Event at</th>
@@ -32,7 +32,13 @@
                 @for (item of response.data; track item)
                 {
                     <tr>
-                        <td>[redo]</td>
+                        <td style="white-space:nowrap;" class="text-center">
+                            <a [routerLink]="['/sections', 'f1-standings', 'details', item.type, item.year]">View</a>
+                            @if (currentYear == item.year) {
+                                &bullet;
+                                <a [routerLink]="['/sections', 'f1-standings', 'editor', item.type, item.year]">Redo</a>
+                            }
+                        </td>
                         <td>{{ item.type }}</td>
                         <td>{{ item.year }}</td>
                         <td style="white-space:nowrap;">{{ item.eventAt | date:'dd/MM/yy, h:mm a' }}</td>
