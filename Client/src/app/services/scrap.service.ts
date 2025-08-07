@@ -13,7 +13,7 @@ export class ScrapService {
     constructor(private requestService: RequestService) { }
 
     scrapFormula1Standings(model: Scr_Formula1StandingRequest) {
-        return this.requestService.post(`/formula1/standings`, model);
+        return this.requestService.post(`/scrap/formula1/standings`, model);
     }
 
     scrapFormula1StandingsAsync(model: Scr_Formula1StandingRequest) {

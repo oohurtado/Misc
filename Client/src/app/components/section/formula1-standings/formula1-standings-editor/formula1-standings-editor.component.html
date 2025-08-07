@@ -2,9 +2,67 @@
 
 <div class="row">
     <div class="col-md-6">
-        form
+        <div class="card">
+            <div class="card-header">
+                Scrap data
+            </div>
+            <div class="card-body">
+
+<!-- *ngIf="_myForm" [formGroup]="_myForm" (ngSubmit)="onDoneClicked()" autocomplete="off" -->
+
+                @if (myForm) {
+                    <form [formGroup]="myForm" (ngSubmit)="onDoneClicked()" autocomplete="off">
+                        <div class="row">
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="type" id="type" aria-label="Floating label select example">
+                                        <option [ngValue]="null" disabled selected>Select an option</option>
+                                        @for(item of types; track item) {
+                                            <option [value]="item">{{ item }}</option>
+                                        }
+                                    </select>
+                                    <label for="floatingSelect">Type</label>
+                                </div>
+                                @if (hasError('type', 'required')) {
+                                    <span class="text-danger d-block">This field is required</span>
+                                }
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <div class="form-floating">
+                                    <select class="form-select" formControlName="year" id="year" aria-label="Floating label select example">
+                                        <option [ngValue]="null" disabled selected>Select an option</option>
+                                        @for(item of years; track item) {
+                                            <option [value]="item">{{ item }}</option>
+                                        }
+                                    </select>
+                                    <label for="floatingSelect">Year</label>
+                                </div>
+                                @if (hasError('year', 'required')) {
+                                    <span class="text-danger d-block">This field is required</span>
+                                }
+                            </div>
+                            <div class="col-md-12 mt-2 mb-2">
+                                <button type="submit" class="btn btn-primary" [disabled]="isProcesing">
+                                    @if(isProcesing) {
+                                        <span><i class="fas fa-sync fa-spin"></i>&nbsp;&nbsp;Scraping</span>
+                                    } @else {
+                                        <span><i class="fa-solid fa-cloud"></i>&nbsp;&nbsp;Scrap</span>
+                                    }
+                                </button>
+                            </div>                                 
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        live info
+        <div class="messages">
+            <ul class="simple-ul">
+                @for (item of messages; track $index) {
+                    <li>{{ item.param3 | date:'dd/MM/yy, hh:mm:ss a'}} - {{ item.param1 }} - {{ item.param2 }}</li>
+                }
+            </ul>
+        </div>
     </div>
 </div>

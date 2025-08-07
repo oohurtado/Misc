@@ -1,0 +1,14 @@
+.messages {
+    padding: 10px;
+    margin: 10px;
+    /* background-color: black; */
+    border-color: darkgray;
+    border-width: 1px;
+    color: darkgray;
+}
+
+.simple-ul {
+    list-style-type: none; /* Quita las viñetas */
+    padding-left: 0;       /* Quita la sangría izquierda */
+    margin-left: 0;        /* Opcional: alinea totalmente a la izquierda */
+}
