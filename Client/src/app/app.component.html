@@ -1,4 +1,12 @@
 <app-navbar></app-navbar>
+<div style="height: 15px;">
+    @if(loading) 
+    {
+        <div class="text-center">
+            <div class="loader super-center"></div>
+        </div>
+    }
+</div>
 <div class="container mt-3 mb-3">
     <router-outlet></router-outlet>
 </div>
