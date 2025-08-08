@@ -29,9 +29,7 @@ namespace Server.Source.Logic
         }
 
         public async Task UpsertFormula1StandingsAsync(Formula1StantingRequest request)
-        {
-            Formula1StandingsValidation(request.Type, request.Year);
-
+        {      
             // current year
             if (request.Year == DateTime.Now.Year)
             {
@@ -136,18 +134,7 @@ namespace Server.Source.Logic
         {
             _logger.LogInformation("Validating Formula 1 standings request: Type={Type}, Year={Year}", type, year);
 
-            if (year > DateTime.Now.Year)
-            {
-                throw new ArgumentException("Year cannot be in the future.");
-            }
-            if (year < 2001)
-            {
-                throw new ArgumentException("Year must be a valid integer greater than or equal to 2001.");
-            }
-            if (type != "drivers" && type != "constructors")
-            {
-                throw new ArgumentException("Type must be either 'drivers' or 'constructors'.");
-            }
+  
         }
         #endregion
     }
