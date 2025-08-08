@@ -19,7 +19,7 @@ namespace Server.Source.Logic
         private readonly IScrapService _scrapService;
         private readonly IScrapDataRepository _scrapDataRepository;
         private readonly ILogger<ScrapLogic> _logger;
-        private readonly IHubContext<Formula1StandingsHub> _hub;
+        private readonly IHubContext<TheMessangerHub> _hub;
 
         private string _connectionId;
 
@@ -27,7 +27,7 @@ namespace Server.Source.Logic
             IScrapService scrapService,
             IScrapDataRepository scrapDataRepository,
             ILogger<ScrapLogic> logger,
-            IHubContext<Formula1StandingsHub> hub
+            IHubContext<TheMessangerHub> hub
             )
         {
             _scrapDataRepository = scrapDataRepository;

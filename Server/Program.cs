@@ -132,7 +132,7 @@ namespace Server
             #endregion
 
             #region signalr
-            app.MapHub<Formula1StandingsHub>("hubs/formula1-standings"); 
+            app.MapHub<TheMessangerHub>("hubs/the-messanger"); 
             #endregion
 
             app.Run();

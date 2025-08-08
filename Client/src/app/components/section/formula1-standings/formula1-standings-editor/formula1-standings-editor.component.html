@@ -62,16 +62,32 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="messages">
-            <ul class="simple-ul">
-                @for (item of messages; track $index) {
-                    @if (item.param2 === '') {
-                        <li><hr style="border: none; border-top: 2px dotted #000; margin: 20px 0;"></li>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th [width]="'1%'">Origin</th>
+                        <th [width]="'1%'">Time</th>
+                        <th [width]="'100%'">Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(messages.length == 0) {
+                       <tr>
+                            <td colspan="3">No messages available</td>
+                       </tr> 
                     } @else {
-                        <li>{{ item.param3 | date:'hh:mm:ss a'}} - {{ item.param1 }} - {{ item.param2 }}</li>
+                        @for(item of messages; track $index) {
+                            <tr>
+                                <td style="white-space:nowrap;">{{ item.param1 }}</td>
+                                <td style="white-space:nowrap;">{{ item.param3 | date:'hh:mm:ss a'}}</td>
+                                <td style="white-space:nowrap;">{{ item.param2 }}</td>
+                            </tr>
+                        }
                     }
-                }
-            </ul>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

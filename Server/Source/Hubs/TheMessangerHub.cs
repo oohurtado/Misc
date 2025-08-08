@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace Server.Source.Hubs
 {
-    public class Formula1StandingsHub : Hub
+    public class TheMessangerHub : Hub
     {        
         private static readonly ConcurrentDictionary<string, string> _userConnections = new();
 

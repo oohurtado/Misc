@@ -126,7 +126,6 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
             this.myForm?.controls['year'].value
         )
 
-        this.messages.push(new Tuple3("Local", "", new Date()));
         this.messages.push(new Tuple3("Local", "Request started", new Date()));
         this.isProcesing = true;
         await this.scrapService
@@ -164,7 +163,7 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
 		};
 
         this.hubConnection = new HubConnectionBuilder()
-			.withUrl(general.HUB_FORMULA1_STANDINGS, options)
+			.withUrl(general.THE_MESSANGER_HUB, options)
 			.build();
 
 		this.hubConnection.on("NotifyToCaller", (data: Scr_Formula1StandingHub) => {
