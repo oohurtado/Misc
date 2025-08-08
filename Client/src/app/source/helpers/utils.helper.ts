@@ -2,7 +2,7 @@ export class Utils {
     static getErrorsResponse(response: any): string {
         let error: string;
         if (response === null) {
-            error = "Ha ocurrido un error desconocido, contacte al administrador";
+            error = "Internal server error. Please try again later.";
         } else {
             error = response.error;            
         }

@@ -8,6 +8,7 @@ import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { Tuple2 } from '../../../../source/models/tuple.models';
 import { RouterModule } from '@angular/router';
 import { SharedService } from '../../../../services/common/shared.service';
+import { Utils } from '../../../../source/helpers/utils.helper';
 // import { PaginatorComponent } from "../../../_shared/paginator/paginator.component";
 
 @Component({
@@ -18,6 +19,8 @@ import { SharedService } from '../../../../services/common/shared.service';
     styleUrl: './formula1-standings-list.component.css'
 })
 export class Formula1StandingsListComponent implements OnInit, OnChanges {
+
+    errorMessage!: string | null;
 
     @Input() pageReady!: IPageReady;
     @Input() section!: string;
@@ -50,6 +53,7 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
     }
 
     async getScrapDataAsync() {
+        this.errorMessage = null;
         let term = '';
         let filter = this.localStorageService.getPageFilterForAsString(this.localStorageService.getPageFilter(this.section));
 
@@ -61,8 +65,7 @@ export class Formula1StandingsListComponent implements OnInit, OnChanges {
                 this.evtDataInfoChanged.emit(new Tuple2<number, number>(this.response.data.length, this.response.grandTotal));
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
-                // Handle the error here
+                this.errorMessage = Utils.getErrorsResponse(error);  
             });
         this.sharedService.onLoading(false);
     }

@@ -22,8 +22,8 @@ export class PaginatorFactory {
                     { text: 'Type', value: 'type', disabled: false },
                     { text: 'Year', value: 'year', disabled: false },
 				],
-                startPosition: 0,
-                isAscending: true
+                startPosition: 1,
+                isAscending: false
             };	
         }
 

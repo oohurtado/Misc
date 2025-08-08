@@ -67,7 +67,5 @@ namespace Server.Controllers
             var result = await _scrapLogic.GetFormula1StandingsAsync(sortColumn, sortOrder, pageNumber, pageSize, term, filters);                       
             return Ok(result);
         }
-
-
     }
 }

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Server.Source.Data;
 using Server.Source.Data.Interfaces;
 using Server.Source.Logic;
@@ -99,6 +101,29 @@ namespace Server
 
 
             app.MapControllers();
+
+            app.UseExceptionHandler(error =>
+            {
+                error.Run(async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    context.Response.ContentType = "application/json";
+
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
+                    {
+                        var errorMessage = "Internal server error. Please try again later.";
+
+                        if (contextFeature.Error is Exception)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                            errorMessage = contextFeature.Error.Message;
+                        }
+
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(errorMessage));
+                    }
+                });
+            });
 
             app.Run();
         }

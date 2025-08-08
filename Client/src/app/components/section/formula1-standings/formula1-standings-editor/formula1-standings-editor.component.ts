@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EnumFormula1StandingType } from '../../../../source/models/enums/formula1-standing-types.enum';
 import { Scr_Formula1StandingRequest } from '../../../../source/models/scrap/formula1-standing.request';
+import { Utils } from '../../../../source/helpers/utils.helper';
 
 @Component({
     selector: 'app-formula1-standings-editor',
@@ -23,6 +24,7 @@ export class Formula1StandingsEditorComponent implements OnInit {
     types: string[];
     years: number[];
     
+    errorMessage!: string | null;
     isProcesing: boolean;
 
     breadcrumb: Tuple2<string,string>[] = [];
@@ -53,20 +55,6 @@ export class Formula1StandingsEditorComponent implements OnInit {
         this.isProcesing = false;
     }
 
-    /*        
-        parameters are received?
-        yes:
-            exists data?
-            yes:
-                init form
-                redo scrap data
-            no:
-                no form, message error
-        nope:
-            int form   
-            button: scrap data            
-    */
-
     async ngOnInit() {
         this.activatedRoute.params.subscribe(async params => {			
 			let type: string | undefined = params['type'];
@@ -84,13 +72,13 @@ export class Formula1StandingsEditorComponent implements OnInit {
     }
 
     async getDataAsync(type: string, year: number) {  
+        this.errorMessage = null;
         await this.scrapService
             .getFormula1StandingsExistsAsync(type, year)
-            .then(p => {
-                console.log("found ", p)
+            .then(p => {                
             })
             .catch(p => {
-                console.log("not found", p);
+                this.errorMessage = Utils.getErrorsResponse(p);
             });
     }
 
@@ -109,6 +97,7 @@ export class Formula1StandingsEditorComponent implements OnInit {
     }
 
     async onDoneClicked() {
+        this.errorMessage = null;        
         if (!this.isFormValid()) {
             return;
         }
@@ -118,18 +107,17 @@ export class Formula1StandingsEditorComponent implements OnInit {
             this.myForm?.controls['year'].value
         )
 
-        this.messages.push(new Tuple3("Local", "Request starts", new Date()));
+        this.messages.push(new Tuple3("Local", "Request started", new Date()));
         this.isProcesing = true;
         await this.scrapService
             .scrapFormula1StandingsAsync(request)
             .then(p => {
-
             })
             .catch(e => {
-
+                this.errorMessage = Utils.getErrorsResponse(e);
             });
         this.isProcesing = false;
-        this.messages.push(new Tuple3("Local", "Request ends", new Date()));
+        this.messages.push(new Tuple3("Local", "Request completed", new Date()));
     }
 
     isFormValid() {
