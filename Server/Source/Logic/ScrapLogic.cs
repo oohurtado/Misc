@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PuppeteerSharp;
 using Server.Source.Data.Interfaces;
 using Server.Source.Helpers;
@@ -40,12 +41,18 @@ namespace Server.Source.Logic
 
         private async Task ScrapService_ProgressEvt(string message)
         {
+            await NotifyAsync(message);
+        }
+
+        private async Task NotifyAsync(string message)
+        {
             if (string.IsNullOrEmpty(_connectionId))
             {
                 return;
             }
 
-            await _hub.Clients.All.SendAsync("NotifyToCaller", new { Message = message });
+            _logger.LogInformation(message);
+            await _hub.Clients.Client(_connectionId).SendAsync("NotifyToCaller", new { Message = message });
         }
 
         public async Task UpsertFormula1StandingsAsync(Formula1StantingRequest request)
@@ -54,8 +61,7 @@ namespace Server.Source.Logic
 
             // current year
             if (request.Year == DateTime.Now.Year)
-            {
-                _logger.LogInformation("Current year standings requested: {Year}", request.Year);
+            {                
                 var data = await _scrapService.Formula1StandingsAsync(request.Type, request.Year);
                 var entity = new Formula1StandingEntity
                 {
@@ -64,19 +70,18 @@ namespace Server.Source.Logic
                     DataJson = JsonSerializer.Serialize(data)
                 };
 
-                var result = await _scrapDataRepository.UpsertFormula1StandingsAsync(request.Type, request.Year, dataJson: JsonSerializer.Serialize(data));
-                _logger.LogInformation($"Upserting data ({(result ? "creating" : "updating" )})");
+                var result = await _scrapDataRepository.UpsertFormula1StandingsAsync(request.Type, request.Year, dataJson: JsonSerializer.Serialize(data));                
+                await NotifyAsync($"Upserting data ({(result ? "creating" : "updating")})");
                 return;
             }
 
             // previous years
-            {
-                _logger.LogInformation("Getting data");
+            {                
                 var existsData = await _scrapDataRepository.GetFormula1Standings(request.Type, request.Year).AnyAsync();
                 if (existsData)
                 {
                     // if data exists, we do nothing
-                    _logger.LogInformation("Data for {Type} in {Year} already exists, no need to scrap again.", request.Type, request.Year);
+                    await NotifyAsync($"Data for {request.Type} in {request.Year} already exists, no need to scrap again.");
                     return;
                 }
                 else
@@ -89,7 +94,7 @@ namespace Server.Source.Logic
                         DataJson = JsonSerializer.Serialize(data)
                     };
                     await _scrapDataRepository.UpsertFormula1StandingsAsync(request.Type, request.Year, dataJson: JsonSerializer.Serialize(data));
-                    _logger.LogInformation("Data for {Type} in {Year} does not exist, scrapping and saving.", request.Type, request.Year);
+                    await NotifyAsync($"Data for {request.Type} in {request.Year} does not exist, saving.");                    
                     return;
                 }
             }
@@ -149,15 +154,6 @@ namespace Server.Source.Logic
                 Data = data,
                 GrandTotal = grandTotal,
             };
-        }
-
-        #region helper methods
-        private void Formula1StandingsValidation(string type, int year)
-        {
-            _logger.LogInformation("Validating Formula 1 standings request: Type={Type}, Year={Year}", type, year);
-
-  
-        }
-        #endregion
+        }   
     }
 }

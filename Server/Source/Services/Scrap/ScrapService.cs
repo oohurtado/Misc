@@ -9,17 +9,15 @@ namespace Server.Source.Services.Scrap
 {
     public class ScrapService : IScrapService
     {        
-        private readonly ILogger<ScrapService> _logger;
         public event Func<string, Task>? ProgressEvt;
 
         public IPage Page { get; set; }
         public IBrowser Browser { get; set; }
 
-        public ScrapService(ILogger<ScrapService> logger)
+        public ScrapService()
         {
             Page = null!;
             Browser = null!;
-            _logger = logger;
         }
 
         #region init browser
@@ -77,12 +75,12 @@ namespace Server.Source.Services.Scrap
             }
             catch (Exception)
             {
-                _logger.LogError("An error occurred while scraping Formula 1 standings.");
+                Notify("An error occurred while scraping Formula 1 standings.");
                 throw;
             }
             finally
             {
-                _logger.LogInformation("Closing Puppeteer browser...");
+                Notify("Closing Puppeteer browser...");
                 if (Page != null)
                 {
                     await Page.CloseAsync();
@@ -253,16 +251,9 @@ namespace Server.Source.Services.Scrap
         }
         #endregion
 
-        private void Notify(string msg, bool log = true, bool live = true)
+        private void Notify(string msg)
         {
-            if (log)
-            {    
-                _logger.LogInformation(msg);
-            }
-            if (live)
-            {
-                ProgressEvt?.Invoke(msg);
-            }
+            ProgressEvt?.Invoke(msg);
         }
     }
 }

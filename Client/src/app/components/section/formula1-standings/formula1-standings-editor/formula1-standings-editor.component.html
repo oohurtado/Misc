@@ -1,12 +1,12 @@
 <app-breadcrumb [data]="breadcrumb"></app-breadcrumb>
 
-connectedToHub {{ connectedToHub }}
-
 <div class="row">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
                 Scrap data
+                <br>
+                <span class="text-secondary">URL: https://www.espn.com/f1/standings</span>
             </div>
             <div class="card-body">
                 @if (myForm) {
@@ -65,7 +65,11 @@ connectedToHub {{ connectedToHub }}
         <div class="messages">
             <ul class="simple-ul">
                 @for (item of messages; track $index) {
-                    <li>{{ item.param3 | date:'hh:mm:ss a'}} - {{ item.param1 }} - {{ item.param2 }}</li>
+                    @if (item.param2 === '') {
+                        <li><hr style="border: none; border-top: 2px dotted #000; margin: 20px 0;"></li>
+                    } @else {
+                        <li>{{ item.param3 | date:'hh:mm:ss a'}} - {{ item.param1 }} - {{ item.param2 }}</li>
+                    }
                 }
             </ul>
         </div>

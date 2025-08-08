@@ -25,6 +25,7 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
 
     hubConnection!: HubConnection;
     connectedToHub!: boolean;
+    connectionId!: string | null;
 
     myForm!: FormGroup;
     types!: string[];
@@ -84,8 +85,8 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
         this.startHub();
     }
 
-    ngOnDestroy() {
-        this.endHub();
+    async ngOnDestroy() {
+        await this.endHub();
     }
 
     async getDataAsync(type: string, year: number) {  
@@ -120,11 +121,12 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
         }
 
         let request = new Scr_Formula1StandingRequest(
-            Utils.generateShortId(),
+            this.connectionId ?? '',
             this.myForm?.controls['type'].value,
             this.myForm?.controls['year'].value
         )
 
+        this.messages.push(new Tuple3("Local", "", new Date()));
         this.messages.push(new Tuple3("Local", "Request started", new Date()));
         this.isProcesing = true;
         await this.scrapService
@@ -167,7 +169,13 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
 
 		this.hubConnection.on("NotifyToCaller", (data: Scr_Formula1StandingHub) => {
 			this.messages.push(new Tuple3("Server", data.message, new Date()));
-		});			
+		});
+
+        // Recibir el ConnectionId asignado
+        this.hubConnection.on('ReceiveConnectionId', (connectionId: string) => {
+            this.connectionId = connectionId;
+            console.log('ConnectionId asignado:', connectionId);
+        });
 
 		this.hubConnection.onclose(() => {
             this.connectedToHub = false;
@@ -183,7 +191,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
             });		
     }
 
-    endHub() {
-        // throw new Error('Method not implemented.');
+    async endHub() {
+        try {
+            await this.hubConnection.stop();      
+        } catch (err) { }
     }
 }
