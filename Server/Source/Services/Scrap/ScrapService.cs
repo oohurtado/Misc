@@ -8,8 +8,9 @@ using System.Diagnostics;
 namespace Server.Source.Services.Scrap
 {
     public class ScrapService : IScrapService
-    {
+    {        
         private readonly ILogger<ScrapService> _logger;
+        public event Func<string, Task>? ProgressEvt;
 
         public IPage Page { get; set; }
         public IBrowser Browser { get; set; }
@@ -24,7 +25,8 @@ namespace Server.Source.Services.Scrap
         #region init browser
         private async Task InitializeAsync()
         {
-            _logger.LogInformation("Initializing Puppeteer browser...");
+            Notify("Initializing Puppeteer browser...");
+
             var pageBrowser = await GetPageAsync(devtools: true, headless: true);
             Page = pageBrowser.Item1;
             Browser = pageBrowser.Item2;
@@ -108,8 +110,7 @@ namespace Server.Source.Services.Scrap
             */
             #endregion
 
-            #region fix urls
-            _logger.LogInformation($"Scrap - getting url for {type} in {year}");
+            #region fix urls            
             if (year == DateTime.Now.Year)
             {
                 if (type == "drivers")
@@ -156,16 +157,16 @@ namespace Server.Source.Services.Scrap
             #endregion
 
             #region scrap data
-            _logger.LogInformation($"Scrap - go to page");
+            Notify($"Scrap - going to page {url} for {type} in {year}");
             await Page.GoToAsync(url);
             //await Page.EvaluateExpressionAsync("setInterval(() => console.log('keep alive'), 10000)");                  
 
-            _logger.LogInformation($"Scrap - getting main div");
+            Notify($"Scrap - getting main div");
             var div = await Page.QuerySelectorAsync("div[class*='standings__table'] > div[class*='ResponsiveTable']");
 
             // driver/constructor
             {
-                _logger.LogInformation($"Scrap - getting divers/constructors");
+                Notify($"Scrap - getting drivers/constructors");
                 var trs = await div.QuerySelectorAllAsync("div[class*='flex'] > table > tbody > tr");
 
                 if (trs == null)
@@ -205,7 +206,7 @@ namespace Server.Source.Services.Scrap
             
             // race track
             {
-                _logger.LogInformation($"Scrap - getting race traks");
+                Notify($"Scrap - getting race tracks");
                 var table = await div.QuerySelectorAsync("div[class*='flex'] > div[class*='Table__ScrollerWrapper'] > div[class*='Table__Scroller'] > table");
                 if (table == null)
                 {
@@ -221,7 +222,7 @@ namespace Server.Source.Services.Scrap
 
                 int i = 0, j = 0;
 
-                _logger.LogInformation($"Scrap - getting race traks points");
+                Notify($"Scrap - getting rece tracks points");
                 var tbody_trs = await table.QuerySelectorAllAsync("tbody > tr");
                 foreach (var tr in tbody_trs)
                 {
@@ -251,5 +252,17 @@ namespace Server.Source.Services.Scrap
             return f1StandingDto;
         }
         #endregion
+
+        private void Notify(string msg, bool log = true, bool live = true)
+        {
+            if (log)
+            {    
+                _logger.LogInformation(msg);
+            }
+            if (live)
+            {
+                ProgressEvt?.Invoke(msg);
+            }
+        }
     }
 }

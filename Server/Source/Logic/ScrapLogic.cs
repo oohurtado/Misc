@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using PuppeteerSharp;
 using Server.Source.Data.Interfaces;
 using Server.Source.Helpers;
+using Server.Source.Hubs;
 using Server.Source.Models;
 using Server.Source.Models.Entities;
 using Server.Source.Models.Scrap.Formula1;
@@ -16,20 +18,40 @@ namespace Server.Source.Logic
         private readonly IScrapService _scrapService;
         private readonly IScrapDataRepository _scrapDataRepository;
         private readonly ILogger<ScrapLogic> _logger;
+        private readonly IHubContext<Formula1StandingsHub> _hub;
+
+        private string _connectionId;
 
         public ScrapLogic(
             IScrapService scrapService,
             IScrapDataRepository scrapDataRepository,
-            ILogger<ScrapLogic> logger
+            ILogger<ScrapLogic> logger,
+            IHubContext<Formula1StandingsHub> hub
             )
         {
-            _scrapService = scrapService;
             _scrapDataRepository = scrapDataRepository;
             _logger = logger;
+            _hub = hub;
+
+            _connectionId = null!;
+            _scrapService = scrapService;
+            _scrapService.ProgressEvt += ScrapService_ProgressEvt;
+        }
+
+        private async Task ScrapService_ProgressEvt(string message)
+        {
+            if (string.IsNullOrEmpty(_connectionId))
+            {
+                return;
+            }
+
+            await _hub.Clients.All.SendAsync("NotifyToCaller", new { Message = message });
         }
 
         public async Task UpsertFormula1StandingsAsync(Formula1StantingRequest request)
         {      
+            _connectionId = request.ConnectionId;
+
             // current year
             if (request.Year == DateTime.Now.Year)
             {

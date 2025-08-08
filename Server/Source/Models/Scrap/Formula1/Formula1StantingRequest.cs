@@ -5,6 +5,9 @@ namespace Server.Source.Models.Scrap.Formula1
     public class Formula1StantingRequest : IValidatableObject
     {
         [Required(ErrorMessage = "Field required")]
+        public string ConnectionId { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Field required")]
         public string Type { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Field required")]

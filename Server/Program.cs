@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Server.Source.Data;
 using Server.Source.Data.Interfaces;
+using Server.Source.Hubs;
 using Server.Source.Logic;
 using Server.Source.Models.Entities;
 using Server.Source.Services.Scrap;
@@ -30,6 +31,10 @@ namespace Server
                 .AllowAnyHeader()
                 .AllowCredentials();
             }));
+            #endregion
+
+            #region signalr
+            builder.Services.AddSignalR(p => p.EnableDetailedErrors = true); 
             #endregion
 
             #region data base
@@ -99,31 +104,36 @@ namespace Server
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
+            #region exception
             app.UseExceptionHandler(error =>
+    {
+        error.Run(async context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+
+            var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+            if (contextFeature != null)
             {
-                error.Run(async context =>
+                var errorMessage = "Internal server error. Please try again later.";
+
+                if (contextFeature.Error is Exception)
                 {
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    context.Response.ContentType = "application/json";
+                    errorMessage = contextFeature.Error.Message;
+                }
 
-                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                    if (contextFeature != null)
-                    {
-                        var errorMessage = "Internal server error. Please try again later.";
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(errorMessage));
+            }
+        });
+    });
+            #endregion
 
-                        if (contextFeature.Error is Exception)
-                        {
-                            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                            errorMessage = contextFeature.Error.Message;
-                        }
-
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(errorMessage));
-                    }
-                });
-            });
+            #region signalr
+            app.MapHub<Formula1StandingsHub>("hubs/formula1-standings"); 
+            #endregion
 
             app.Run();
         }

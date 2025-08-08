@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Tuple2, Tuple3 } from '../../../../source/models/tuple.models';
 import { BreadcrumbComponent } from '../../../_shared/breadcrumb/breadcrumb.component';
 import { BreadcrumbFactory } from '../../../../source/factories/breadcrumb.factory';
@@ -10,6 +10,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { EnumFormula1StandingType } from '../../../../source/models/enums/formula1-standing-types.enum';
 import { Scr_Formula1StandingRequest } from '../../../../source/models/scrap/formula1-standing.request';
 import { Utils } from '../../../../source/helpers/utils.helper';
+import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions } from '@microsoft/signalr';
+import { general } from '../../../../source/general';
+import { Scr_Formula1StandingHub } from '../../../../source/models/scrap/formula1-standing.hub';
 
 @Component({
     selector: 'app-formula1-standings-editor',
@@ -18,14 +21,17 @@ import { Utils } from '../../../../source/helpers/utils.helper';
     templateUrl: './formula1-standings-editor.component.html',
     styleUrl: './formula1-standings-editor.component.css'
 })
-export class Formula1StandingsEditorComponent implements OnInit {
+export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
+
+    hubConnection!: HubConnection;
+    connectedToHub!: boolean;
 
     myForm!: FormGroup;
-    types: string[];
-    years: number[];
+    types!: string[];
+    years!: number[];
     
     errorMessage!: string | null;
-    isProcesing: boolean;
+    isProcesing!: boolean;
 
     breadcrumb: Tuple2<string,string>[] = [];
     messages: Tuple3<string, string, Date>[] = [];
@@ -39,7 +45,12 @@ export class Formula1StandingsEditorComponent implements OnInit {
         private activatedRoute: ActivatedRoute,
         private formBuilder: FormBuilder) {
 
-        this.breadcrumb = BreadcrumbFactory.create(EnumSections.Formula1StandingsEditor);
+        this.initEditor();
+        this.initHub();
+    }
+
+    initEditor() {
+            this.breadcrumb = BreadcrumbFactory.create(EnumSections.Formula1StandingsEditor);
 
         this.types = [
             EnumFormula1StandingType.Constructors,
@@ -69,6 +80,12 @@ export class Formula1StandingsEditorComponent implements OnInit {
             }
             this.setupForm(type, year);
 		});	
+
+        this.startHub();
+    }
+
+    ngOnDestroy() {
+        this.endHub();
     }
 
     async getDataAsync(type: string, year: number) {  
@@ -103,6 +120,7 @@ export class Formula1StandingsEditorComponent implements OnInit {
         }
 
         let request = new Scr_Formula1StandingRequest(
+            Utils.generateShortId(),
             this.myForm?.controls['type'].value,
             this.myForm?.controls['year'].value
         )
@@ -135,5 +153,37 @@ export class Formula1StandingsEditorComponent implements OnInit {
 
     hasError(nameField: string, errorCode: string) {
         return this.myForm?.get(nameField)?.hasError(errorCode) && this.myForm?.get(nameField)?.touched;
+    }
+
+    initHub() {
+        this.connectedToHub = false;
+
+		const options: IHttpConnectionOptions = {	
+		};
+
+        this.hubConnection = new HubConnectionBuilder()
+			.withUrl(general.HUB_FORMULA1_STANDINGS, options)
+			.build();
+
+		this.hubConnection.on("NotifyToCaller", (data: Scr_Formula1StandingHub) => {
+			this.messages.push(new Tuple3("Server", data.message, new Date()));
+		});			
+
+		this.hubConnection.onclose(() => {
+            this.connectedToHub = false;
+		});			            
+    }
+
+    startHub() {
+        this.hubConnection.start()
+            .then(_ => {
+                this.connectedToHub = true;                
+            }).catch(error => {
+                this.connectedToHub = false;
+            });		
+    }
+
+    endHub() {
+        // throw new Error('Method not implemented.');
     }
 }

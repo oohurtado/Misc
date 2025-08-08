@@ -32,7 +32,7 @@
                 @for (item of response.data; track item)
                 {
                     <tr>
-                        <td style="white-space:nowrap;" class="text-center">
+                        <td style="white-space:nowrap;" class="text-start">
                             <a [routerLink]="['/sections', 'f1-standings', 'details', item.type, item.year]">View</a>
                             @if (currentYear == item.year) {
                                 &bullet;
