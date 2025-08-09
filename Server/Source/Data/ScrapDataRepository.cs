@@ -71,7 +71,7 @@ namespace Server.Source.Data
                     Type = type,
                     Year = year,
                     DataJson = dataJson,
-                    EventAt = DateTime.UtcNow
+                    EventAt = DateTime.Now
                 };
                 _context.Formula1Standings.Add(entity);
                 await _context.SaveChangesAsync();
@@ -81,7 +81,7 @@ namespace Server.Source.Data
             else
             {
                 entity.DataJson = dataJson;
-                entity.EventAt = DateTime.UtcNow;
+                entity.EventAt = DateTime.Now;
                 _context.Formula1Standings.Update(entity);
                 await _context.SaveChangesAsync();
 
