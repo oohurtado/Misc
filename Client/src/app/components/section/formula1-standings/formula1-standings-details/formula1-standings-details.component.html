@@ -1,1 +1,30 @@
 <app-breadcrumb [data]="breadcrumb"></app-breadcrumb>
+
+@if(errorMessage != null)
+{
+    <div colspan="4" class="text-center">
+        <div  class="alert alert-danger mt-4 ml-4 mr-4" role="alert">
+            {{ errorMessage }}
+        </div>
+    </div>
+} @else if (response != null && response.success) {
+    <!-- <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="white-space:nowrap;"></th>
+                    @for(item of response.data.raceTracks; track item) {
+                        <th style="white-space:nowrap;">{{ item }}</th>
+                    }             
+                </tr>
+            </thead>
+            <tbody>
+                @for (i of rows; track i) {
+
+                }
+            </tbody>
+        </table>
+    </div> -->
+}
+
+<pre>{{ response | json }}</pre>

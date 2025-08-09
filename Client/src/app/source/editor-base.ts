@@ -7,7 +7,7 @@ export abstract class EditorBase {
     errorMessage!: string | null;               // error handling
     isProcessing!: boolean;                     // processing request
 
-    breadcrumb: Tuple2<string,string>[] = [];   // breadcrumb
+    breadcrumb: Tuple2<string,string>[] = [];   // navigation
 
     isFormValid() {
         if (this.myForm?.invalid || this.myForm?.status === "INVALID" || this.myForm?.status === "PENDING") {

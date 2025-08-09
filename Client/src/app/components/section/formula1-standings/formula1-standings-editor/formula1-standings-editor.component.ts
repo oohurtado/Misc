@@ -52,7 +52,7 @@ export class Formula1StandingsEditorComponent extends EditorBase implements OnIn
     }
 
     initEditor() {
-            this.breadcrumb = BreadcrumbFactory.create(EnumSections.Formula1StandingsEditor);
+        this.breadcrumb = BreadcrumbFactory.create(EnumSections.Formula1StandingsEditor);
 
         this.types = [
             EnumFormula1StandingType.Constructors,
@@ -74,9 +74,10 @@ export class Formula1StandingsEditorComponent extends EditorBase implements OnIn
             let year: number | undefined = params['year'];
 
             if (type !== undefined && year !== undefined) {                
-                await this.getDataAsync(type, year);
-            }            
-            this.setupForm(type, year);
+                this.setupForm(type, year);
+            } else {
+                this.setupForm(null!, null!);
+            }
 		});	
 
         this.startHub();
@@ -84,17 +85,6 @@ export class Formula1StandingsEditorComponent extends EditorBase implements OnIn
 
     async ngOnDestroy() {
         await this.endHub();
-    }
-
-    async getDataAsync(type: string, year: number) {  
-        this.errorMessage = null;
-        await this.scrapService
-            .getFormula1StandingsExistsAsync(type, year)
-            .then(p => {                
-            })
-            .catch(p => {
-                this.errorMessage = Utils.getErrorsResponse(p);
-            });
     }
 
     setupForm(type: string | undefined, year: number | undefined) {
