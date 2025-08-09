@@ -13,11 +13,13 @@ import { Utils } from '../../../../source/helpers/utils.helper';
 import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions } from '@microsoft/signalr';
 import { general } from '../../../../source/general';
 import { Scr_Formula1StandingHub } from '../../../../source/models/scrap/formula1-standing.hub';
+import { TheMessangerComponent } from "../../../_shared/the-messanger/the-messanger.component";
 
 @Component({
     selector: 'app-formula1-standings-editor',
     standalone: true,
-    imports: [BreadcrumbComponent, DatePipe, ReactiveFormsModule],
+    imports: [BreadcrumbComponent, ReactiveFormsModule, TheMessangerComponent],
+    providers: [DatePipe],
     templateUrl: './formula1-standings-editor.component.html',
     styleUrl: './formula1-standings-editor.component.css'
 })
@@ -34,14 +36,17 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
     errorMessage!: string | null;
     isProcesing!: boolean;
 
-    breadcrumb: Tuple2<string,string>[] = [];
-    messages: Tuple3<string, string, Date>[] = [];
+    breadcrumb: Tuple2<string,string>[] = [];    
+    
+    columns: string[] = ['Origin', 'Time', 'Message'];
+    messages: string[][] = [];    
 
 
     START_YEAR: number = 2001;
     END_YEAR: number = new Date().getFullYear();
     
     constructor(
+        private datePipe: DatePipe,
         private scrapService: ScrapService,
         private activatedRoute: ActivatedRoute,
         private formBuilder: FormBuilder) {
@@ -72,13 +77,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
 			let type: string | undefined = params['type'];
             let year: number | undefined = params['year'];
 
-            if (type !== undefined && year !== undefined) {
-                this.messages.push(new Tuple3("Local", `Parameters received (type:${type}, year:${year})`, new Date));
+            if (type !== undefined && year !== undefined) {                
                 await this.getDataAsync(type, year);
-            }
-            else {
-                this.messages.push(new Tuple3("Local", "No parameters received", new Date()));
-            }
+            }            
             this.setupForm(type, year);
 		});	
 
@@ -126,7 +127,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
             this.myForm?.controls['year'].value
         )
 
-        this.messages.push(new Tuple3("Local", "Request started", new Date()));
+        let dateStr = this.datePipe.transform(new Date(), 'hh:mm:ss a');
+        this.messages.push(["Local", dateStr ?? '', `Request started`]);
+
         this.isProcesing = true;
         await this.scrapService
             .scrapFormula1StandingsAsync(request)
@@ -136,7 +139,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
                 this.errorMessage = Utils.getErrorsResponse(e);
             });
         this.isProcesing = false;
-        this.messages.push(new Tuple3("Local", "Request completed", new Date()));
+
+        let dateStr2 = this.datePipe.transform(new Date(), 'hh:mm:ss a');
+        this.messages.push(["Local", dateStr2 ?? '', `Request completed`]);
     }
 
     isFormValid() {
@@ -167,7 +172,8 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
 			.build();
 
 		this.hubConnection.on("NotifyToCaller", (data: Scr_Formula1StandingHub) => {
-			this.messages.push(new Tuple3("Server", data.message, new Date()));
+            let dateStr = this.datePipe.transform(new Date(), 'hh:mm:ss a');
+            this.messages.push(["Server", dateStr ?? '', `${data.message}`]);
 		});
 
         // Recibir el ConnectionId asignado

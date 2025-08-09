@@ -1,0 +1,26 @@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                @for(item of columns; track item) {
+                    <th style="white-space:nowrap;">{{ item }}</th>
+                }             
+            </tr>
+        </thead>
+        <tbody>
+            @if(data.length == 0) {
+                <tr>
+                    <td [colSpan]="columns.length">No messages available</td>
+                </tr> 
+            } @else {
+                @for(row of data; track row) {
+                    <tr>
+                        @for(col of row; track col) {
+                            <td style="white-space:nowrap;">{{ col }}</td>
+                        }
+                    </tr>
+                }      
+            }
+        </tbody>
+    </table>
+</div>

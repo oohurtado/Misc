@@ -1,7 +1,7 @@
 <app-breadcrumb [data]="breadcrumb"></app-breadcrumb>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div class="card">
             <div class="card-header">
                 Scrap data
@@ -61,33 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th [width]="'1%'">Origin</th>
-                        <th [width]="'1%'">Time</th>
-                        <th [width]="'100%'">Message</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(messages.length == 0) {
-                       <tr>
-                            <td colspan="3">No messages available</td>
-                       </tr> 
-                    } @else {
-                        @for(item of messages; track $index) {
-                            <tr>
-                                <td style="white-space:nowrap;">{{ item.param1 }}</td>
-                                <td style="white-space:nowrap;">{{ item.param3 | date:'hh:mm:ss a'}}</td>
-                                <td style="white-space:nowrap;">{{ item.param2 }}</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
+    <div class="col-md-7">
+        <app-the-messanger [columns]="columns" [data]="messages"></app-the-messanger>
     </div>
 </div>
