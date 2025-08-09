@@ -14,6 +14,7 @@ import { HubConnection, HubConnectionBuilder, IHttpConnectionOptions } from '@mi
 import { general } from '../../../../source/general';
 import { Scr_Formula1StandingHub } from '../../../../source/models/scrap/formula1-standing.hub';
 import { TheMessangerComponent } from "../../../_shared/the-messanger/the-messanger.component";
+import { EditorBase } from '../../../../source/editor-base';
 
 @Component({
     selector: 'app-formula1-standings-editor',
@@ -23,36 +24,31 @@ import { TheMessangerComponent } from "../../../_shared/the-messanger/the-messan
     templateUrl: './formula1-standings-editor.component.html',
     styleUrl: './formula1-standings-editor.component.css'
 })
-export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
+export class Formula1StandingsEditorComponent extends EditorBase implements OnInit, OnDestroy {
 
+    // editor
+    types!: string[];
+    years!: number[];    
+    START_YEAR: number = 2001;
+    END_YEAR: number = new Date().getFullYear();
+
+    // hub
     hubConnection!: HubConnection;
     connectedToHub!: boolean;
     connectionId!: string | null;
-
-    myForm!: FormGroup;
-    types!: string[];
-    years!: number[];
     
-    errorMessage!: string | null;
-    isProcesing!: boolean;
-
-    breadcrumb: Tuple2<string,string>[] = [];    
-    
+    // hub messages
     columns: string[] = ['Origin', 'Time', 'Message'];
-    messages: string[][] = [];    
-
-
-    START_YEAR: number = 2001;
-    END_YEAR: number = new Date().getFullYear();
+    messages: string[][] = [];   
     
     constructor(
         private datePipe: DatePipe,
         private scrapService: ScrapService,
         private activatedRoute: ActivatedRoute,
         private formBuilder: FormBuilder) {
-
-        this.initEditor();
-        this.initHub();
+            super();
+            this.initEditor();
+            this.initHub();
     }
 
     initEditor() {
@@ -69,7 +65,7 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
         }
         this.years = this.years.reverse();
 
-        this.isProcesing = false;
+        this.isProcessing = false;
     }
 
     async ngOnInit() {
@@ -133,7 +129,7 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
         let dateStr = this.datePipe.transform(new Date(), 'hh:mm:ss a');
         this.messages.push(["Local", dateStr ?? '', `Request started`]);
 
-        this.isProcesing = true;
+        this.isProcessing = true;
         await this.scrapService
             .scrapFormula1StandingsAsync(request)
             .then(p => {
@@ -141,30 +137,13 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
             .catch(e => {
                 this.errorMessage = Utils.getErrorsResponse(e);
             });
-        this.isProcesing = false;
+        this.isProcessing = false;
 
         this.myForm.get('type')?.enable();
         this.myForm.get('year')?.enable();
 
         let dateStr2 = this.datePipe.transform(new Date(), 'hh:mm:ss a');
         this.messages.push(["Local", dateStr2 ?? '', `Request completed`]);
-    }
-
-    isFormValid() {
-        if (this.myForm?.invalid || this.myForm?.status === "INVALID" || this.myForm?.status === "PENDING") {
-            Object.values(this.myForm.controls)
-                .forEach(control => {
-                    control.markAsTouched();
-                });
-
-            return false;
-        }
-
-        return true;
-    }
-
-    hasError(nameField: string, errorCode: string) {
-        return this.myForm?.get(nameField)?.hasError(errorCode) && this.myForm?.get(nameField)?.touched;
     }
 
     initHub() {

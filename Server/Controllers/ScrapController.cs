@@ -18,7 +18,7 @@ namespace Server.Controllers
         }
 
         /// <summary>
-        /// Creates or updates Formula 1 standings.
+        /// Upsert scrap data
         /// </summary>
         [HttpPost]
         [Route("formula1/standings")]
@@ -29,7 +29,7 @@ namespace Server.Controllers
         }
 
         /// <summary>
-        /// Get Formula 1 standings for a specific type and year.
+        /// Get scrap data by type and year
         /// </summary>
         [HttpGet]
         [Route("formula1/standings/{type:required}/{year:required}")]
@@ -44,6 +44,9 @@ namespace Server.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get scrap data by type and year existence
+        /// </summary>
         [HttpGet]
         [Route("formula1/standings/{type:required}/{year:required}/exists")]
         public async Task<IActionResult> Formula1StandingsExistsAsync(string type, int year)
@@ -58,7 +61,7 @@ namespace Server.Controllers
         }
 
         /// <summary>
-        /// Get Formula 1 standings with pagination and sorting.
+        /// Get scrap data by page
         /// </summary>
         [HttpGet]
         [Route("formula1/standings/{sortColumn}/{sortOrder}/{pageNumber}/{pageSize}")]
