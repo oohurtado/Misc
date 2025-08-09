@@ -11,20 +11,20 @@ export class BreadcrumbFactory {
         if (section === EnumSections.Formula1StandingsList) {
             return [
                 new Tuple2<string, string>("/", "Home"),
-                new Tuple2<string, string>("", "Formula 1 standings"),
+                new Tuple2<string, string>("", "ESPN Formula 1 standings"),
             ]
         }        
         if (section === EnumSections.Formula1StandingsEditor) {
             return [
                 new Tuple2<string, string>("/", "Home"),
-                new Tuple2<string, string>("/sections/f1-standings", "Formula 1 standings"),
+                new Tuple2<string, string>("/sections/f1-standings", "ESPN Formula 1 standings"),
                 new Tuple2<string, string>("", "Editor"),
             ]
         }
         if (section === EnumSections.Formula1StandingsDetails) {
             return [
                 new Tuple2<string, string>("/", "Home"),
-                new Tuple2<string, string>("/sections/f1-standings", "Formula 1 standings"),
+                new Tuple2<string, string>("/sections/f1-standings", "ESPN Formula 1 standings"),
                 new Tuple2<string, string>("", "Details"),
             ]
         }        

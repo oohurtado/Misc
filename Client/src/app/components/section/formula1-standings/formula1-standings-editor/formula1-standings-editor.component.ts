@@ -121,6 +121,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
             return;
         }
 
+        this.myForm.get('type')?.disable();
+        this.myForm.get('year')?.disable();
+
         let request = new Scr_Formula1StandingRequest(
             this.connectionId ?? '',
             this.myForm?.controls['type'].value,
@@ -139,6 +142,9 @@ export class Formula1StandingsEditorComponent implements OnInit, OnDestroy {
                 this.errorMessage = Utils.getErrorsResponse(e);
             });
         this.isProcesing = false;
+
+        this.myForm.get('type')?.enable();
+        this.myForm.get('year')?.enable();
 
         let dateStr2 = this.datePipe.transform(new Date(), 'hh:mm:ss a');
         this.messages.push(["Local", dateStr2 ?? '', `Request completed`]);

@@ -8,18 +8,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
     templateUrl: './the-messanger.component.html',
     styleUrl: './the-messanger.component.css'
 })
-export class TheMessangerComponent implements OnChanges {
+export class TheMessangerComponent {
 
     @Input() columns: string[] = [];
-    @Input() data: string[][] = [];    
-
-    ngOnChanges(changes: SimpleChanges): void {
-        const prevData = changes['data'].previousValue;
-        const currData = changes['data'].currentValue;
-
-        if (prevData !== currData) {
-            // this.pageReady = Object.assign(<IPageReady>{}, curr);
-            // await this.getScrapDataAsync();
-        }
-    }
+    @Input() data: string[][] = [];       
 }
