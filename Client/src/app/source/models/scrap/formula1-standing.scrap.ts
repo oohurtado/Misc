@@ -1,16 +1,12 @@
 export class Scr_Formula1StandingScrap {
-    raceTracks: string[] = [];
-    columnLabels?: Scr_Formula1Standing_ColumnLabel[];
-    rowLabels?: Scr_Formula1Standing_RowLabel[];
+    columns: Src_Formula1StandingScrap_Column[] = [];
+    rows: string[] = [];
+    points: string[][] = [];
 }
 
-export class Scr_Formula1Standing_ColumnLabel {
+export class Src_Formula1StandingScrap_Column {
     position: string = '';
     image: string = '';
     abbreviation: string = '';
     name: string = '';
-}
-
-export class Scr_Formula1Standing_RowLabel {
-    points: string[] = [];
 }

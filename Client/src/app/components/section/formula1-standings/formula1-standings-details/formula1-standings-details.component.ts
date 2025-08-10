@@ -38,9 +38,11 @@ export class Formula1StandingsDetailsComponent implements OnInit {
 			let type: string | undefined = params['type'];
             let year: number | undefined = params['year'];
 
-            if (type !== undefined && year !== undefined) {                
+            if (type !== undefined && year !== undefined) {
                 await this.getDataAsync(type, year);
-            }            
+
+                this.breadcrumb[this.breadcrumb.length - 1].param2 = `Details ${type}, ${year}`;
+            }
 		});	
     }
 
@@ -49,17 +51,15 @@ export class Formula1StandingsDetailsComponent implements OnInit {
         await this.scrapService
             .getFormula1StandingsAsync(type, year)
             .then(p => { 
-                this.response = p;
-                console.log()
-                console.log()
-                if (this.response.data.columnLabels?.length != this.response.data.rowLabels?.length) {
-                    this.errorMessage = "Possible error with the data";
-                } else { 
-                    this.rows = this.response.data.columnLabels?.length ?? 0;
-                }
+                this.response = p;     
             })
             .catch(p => {
                 this.errorMessage = Utils.getErrorsResponse(p);
             });
     }
+
+    getPositionFixed(sPos: string) : string{
+        let pos = Number(sPos);
+        return pos < 10 ? '\u00A0' + pos : pos + '';
+    }    
 }

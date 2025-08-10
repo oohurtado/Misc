@@ -92,11 +92,11 @@ namespace Server.Source.Services.Scrap
         private async Task<Formula1StandingScrap> Formula1StandingsScrapAsync(string type, int year)
         {
             var url = string.Empty;
-            var f1StandingDto = new Formula1StandingScrap()
+            var data = new Formula1StandingScrap()
             {
-                ColumnLabels = new List<Formula1Standing_ColumnLabel>(),
-                RaceTracks = new List<string>(),
-                RowLabels = new List<Formula1Standing_RowLabel>(),
+                Columns = new List<Formula1StandingScrap_Column>(),
+                Rows = new List<string>(),
+                Points = new List<List<string>>(),
             };            
 
             #region example url
@@ -192,12 +192,12 @@ namespace Server.Source.Services.Scrap
                     }
                     var name = await spans[3].EvaluateFunctionAsync<string>("el => el.textContent.trim()");
 
-                    f1StandingDto.ColumnLabels.Add(new Formula1Standing_ColumnLabel
+                    data.Columns.Add(new Formula1StandingScrap_Column()
                     {
                         Position = position,
-                        Image = imgName,
                         Abbreviation = abbreviationName,
-                        Name = name
+                        Name = name,
+                        Image = imgName,
                     });
                 }
             }            
@@ -215,39 +215,29 @@ namespace Server.Source.Services.Scrap
                 foreach (var a in thead_a)
                 {
                     var name = await a.EvaluateFunctionAsync<string>("el => el.textContent.trim()");
-                    f1StandingDto.RaceTracks.Add(name);
+                    data.Rows.Add(name);
                 }
-
-                int i = 0, j = 0;
 
                 Notify($"Scrap - getting rece tracks points");
                 var tbody_trs = await table.QuerySelectorAllAsync("tbody > tr");
                 foreach (var tr in tbody_trs)
                 {
-                    f1StandingDto.RowLabels.Add(new Formula1Standing_RowLabel
-                    {
-                        Points = new List<string>()
-                    });
-
                     var tds = await tr.QuerySelectorAllAsync("td");
 
-                    j = 0;
+                    var tmpPoints = new List<string>();
                     foreach (var td in tds)
                     {
-                        //_logger.LogInformation($"Row {i} - {j}");
                         var span = await td.QuerySelectorAsync("span");
                         var points = await span.EvaluateFunctionAsync<string>("el => el.textContent.trim()");
-                        f1StandingDto.RowLabels.Last().Points.Add(points);
-
-                        j++;
+                        tmpPoints.Add(points);
                     }
 
-                    i++;
+                    data.Points.Add(tmpPoints);
                 }
             }            
             #endregion
 
-            return f1StandingDto;
+            return data;
         }
         #endregion
 

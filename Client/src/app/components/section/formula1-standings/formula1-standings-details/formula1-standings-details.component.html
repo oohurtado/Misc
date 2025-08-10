@@ -8,23 +8,32 @@
         </div>
     </div>
 } @else if (response != null && response.success) {
-    <!-- <div class="table-responsive">
+    <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
-                    <th style="white-space:nowrap;"></th>
-                    @for(item of response.data.raceTracks; track item) {
+                    <th style="white-space:nowrap;">D/C</th>
+                    @for(item of response.data.rows; track item) {
                         <th style="white-space:nowrap;">{{ item }}</th>
                     }             
                 </tr>
             </thead>
             <tbody>
-                @for (i of rows; track i) {
-
+                @for(itemR of response.data.points; track rowIndex; let rowIndex = $index) {                    
+                    <tr>                        
+                        @for(itemC of itemR; track colIndex; let colIndex = $index) {
+                            @if(colIndex === 0) {
+                                <td style="white-space:nowrap;" [title]="response.data.columns[rowIndex].abbreviation">
+                                    {{ getPositionFixed(response.data.columns[rowIndex].position) }}
+                                    <img [src]="response.data.columns[rowIndex].image">
+                                    {{ response.data.columns[rowIndex].name }}
+                                </td>
+                            }
+                            <td>{{ itemC }}</td>
+                        }
+                    </tr>
                 }
-            </tbody>
+            </tbody>        
         </table>
-    </div> -->
+    </div>
 }
-
-<pre>{{ response | json }}</pre>
