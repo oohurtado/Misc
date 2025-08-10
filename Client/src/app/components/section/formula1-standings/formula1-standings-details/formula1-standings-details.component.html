@@ -13,6 +13,7 @@
             <thead>
                 <tr>
                     <th style="white-space:nowrap;">D/C</th>
+                    <th style="white-space:nowrap;">Points</th>
                     @for(item of response.data.rows; track item) {
                         <th style="white-space:nowrap;">{{ item }}</th>
                     }             
@@ -28,7 +29,8 @@
                                     <img [src]="response.data.columns[rowIndex].image">
                                     {{ response.data.columns[rowIndex].name }}
                                 </td>
-                            }
+                                <td style="background-color: beige;">{{ sum(itemR) }}</td>
+                            }                            
                             <td>{{ itemC }}</td>
                         }
                     </tr>

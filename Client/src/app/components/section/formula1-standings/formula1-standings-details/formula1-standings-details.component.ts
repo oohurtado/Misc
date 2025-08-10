@@ -62,4 +62,18 @@ export class Formula1StandingsDetailsComponent implements OnInit {
         let pos = Number(sPos);
         return pos < 10 ? '\u00A0' + pos : pos + '';
     }    
+
+    sum(arr: string[]) : number {
+        return arr.map(str => {
+            // Si está vacío o es "-", devolver 0
+            if (str === "" || str === "-") {
+                return 0;
+            }
+            // Intentar convertir a número
+            const n = Number(str);
+            // Si no es un número válido (NaN), devolver 0
+            return isNaN(n) ? 0 : n;
+        })
+        .reduce((acc, curr) => acc + curr, 0);
+    }
 }
