@@ -6,6 +6,7 @@
         {
             UserColors = [];
         }
+
         /// <summary>
         /// Relationships
         /// </summary>
