@@ -19,13 +19,15 @@ namespace Server.Source.Data
 
             builder.Entity<Formula1StandingEntity>().ToTable("Formula1Standings");
             builder.Entity<PersonalInformationEntity>().ToTable("PersonalInformation");
+            builder.Entity<UserColorEntity>().ToTable("UserColors");
+            builder.Entity<ColorEntity>().ToTable("Colors");
 
             builder.Entity<UserEntity>(e =>
             {
                 e.Property(p => p.FirstName).IsRequired(required: true).HasMaxLength(50);
                 e.Property(p => p.LastName).IsRequired(required: true).HasMaxLength(50);
 
-                e.HasOne(p => p.PersonalInformation).WithOne(p => p.User).OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(p => p.PersonalInformation).WithOne(p => p.User).OnDelete(DeleteBehavior.Cascade);                
             });
 
             builder.Entity<Formula1StandingEntity>(e =>
@@ -53,6 +55,22 @@ namespace Server.Source.Data
                 e.Property(p => p.Picture).HasMaxLength(100);
 
                 e.HasOne(p => p.User).WithOne(p => p.PersonalInformation).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<ColorEntity>(e =>
+            {
+                e.Property(p => p.Id).HasColumnName("ColorId");
+
+                e.Property(p => p.Name).HasMaxLength(50);
+                e.Property(p => p.Code).HasMaxLength(20);
+            });
+
+            builder.Entity<UserColorEntity>(e =>
+            {
+                e.Property(p => p.Id).HasColumnName("UserColorId");
+
+                e.HasOne(p => p.User).WithMany(p => p.UserColors).OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(p => p.Color).WithMany(p => p.UserColors).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
