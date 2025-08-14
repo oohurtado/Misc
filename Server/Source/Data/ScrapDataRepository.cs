@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Source.Data.Interfaces;
 using Server.Source.Helpers;
-using Server.Source.Models.Entities;
+using Server.Source.Models.Entities.WebScraping;
 using System.Linq.Expressions;
 
 namespace Server.Source.Data

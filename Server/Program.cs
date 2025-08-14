@@ -6,7 +6,7 @@ using Server.Source.Data;
 using Server.Source.Data.Interfaces;
 using Server.Source.Hubs;
 using Server.Source.Logic;
-using Server.Source.Models.Entities;
+using Server.Source.Models.Entities.Relationships;
 using Server.Source.Services.Scrap;
 
 namespace Server

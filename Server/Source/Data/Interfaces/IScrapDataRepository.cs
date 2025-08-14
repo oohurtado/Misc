@@ -1,4 +1,4 @@
-﻿using Server.Source.Models.Entities;
+﻿using Server.Source.Models.Entities.WebScraping;
 
 namespace Server.Source.Data.Interfaces
 {

@@ -7,10 +7,10 @@ using Server.Source.Helpers;
 using Server.Source.Hubs;
 using Server.Source.Models;
 using Server.Source.Models.Entities;
+using Server.Source.Models.Entities.WebScraping;
 using Server.Source.Models.Scrap.Formula1;
 using Server.Source.Services.Scrap;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Source.Logic
 {
