@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PuppeteerSharp;
-using Server.Source.Data.Interfaces;
+using Server.Source.Data.Scrap;
 using Server.Source.Helpers;
 using Server.Source.Hubs;
 using Server.Source.Models;

@@ -1,6 +1,6 @@
 ﻿using Server.Source.Models.Entities.WebScraping;
 
-namespace Server.Source.Data.Interfaces
+namespace Server.Source.Data.Scrap
 {
     public interface IScrapDataRepository
     {
