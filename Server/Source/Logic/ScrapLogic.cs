@@ -46,12 +46,13 @@ namespace Server.Source.Logic
 
         private async Task NotifyAsync(string message)
         {
+            _logger.LogInformation(message);
+
             if (string.IsNullOrEmpty(_connectionId))
             {
                 return;
             }
 
-            _logger.LogInformation(message);
             await _hub.Clients.Client(_connectionId).SendAsync("NotifyToCaller", new { Message = message });
         }
 

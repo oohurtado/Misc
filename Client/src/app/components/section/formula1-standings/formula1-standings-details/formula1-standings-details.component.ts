@@ -26,6 +26,8 @@ export class Formula1StandingsDetailsComponent implements OnInit {
     response!: ApiResponse<Scr_Formula1StandingScrap>; 
     rows: number = 0;
 
+    type!: string;
+
     constructor(
         private scrapService: ScrapService,
         private activatedRoute: ActivatedRoute
@@ -43,6 +45,8 @@ export class Formula1StandingsDetailsComponent implements OnInit {
 
                 this.breadcrumb[this.breadcrumb.length - 1].param2 = `Details ${type}, ${year}`;
             }
+
+            this.type = type ?? '¿?';
 		});	
     }
 
